@@ -1,11 +1,11 @@
 import React from 'react';
 import './HeaderSection.css'; // You'll create the CSS file for styling this component
-
+import image1 from './Images/logo.png'
 const HeaderSection = () => {
   return (
     <div className="header-section">
       <div className="logo">
-        <img src="logo.png" alt="InsightWire" className="logo-img" />
+        <img src={image1} alt="InsightWire" className="logo-img" />
         <h1>InsightWire</h1>
         <p>Don't be fooled by media bias & misinformation.</p>
       </div>

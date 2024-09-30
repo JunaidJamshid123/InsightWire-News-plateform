@@ -1,13 +1,21 @@
 import React from 'react';
 import NewsCard from './NewsCard';
 import TopStories from './TopStories';
+import demo1 from './Images/demo1.jpeg';
+import demo2 from './Images/demo2.jpeg';
+
 
 const NewsSection = () => {
     const newsCards = [
         {
-            image: 'image-url', // replace with actual URLs
+            image: demo2, // replace with actual URLs
             title: 'The Significance of Polish American Voters...',
-            description: 'In the recent ABC news...'
+            description: 'Many B movies of the 1940s, 50s, and 60s utilized the "spinning newspaper" effect to narrate important plot points that occurred offscreen. The effect necessitated the appearance of a realistic front page, which consisted of a main headline relevant to the plot, and several smaller headlines used as filler. A large number of these spinning newspapers included stories titled "New Petitions Against Tax" and "Building Code Under Fire'
+        },
+         {
+            image: demo1, // replace with actual URLs
+            title: 'Israil Attack on Hazbullah',
+            description: 'Many B movies of the 1940s, 50s, and 60s utilized the "spinning newspaper" effect to narrate important plot points that occurred offscreen. The effect necessitated the appearance of a realistic front page, which consisted of a main headline relevant to the plot, and several smaller headlines used as filler. A large number of these spinning newspapers included stories titled "New Petitions Against Tax" and "Building Code Under Fire'
         },
         // Add more news cards here
     ];
@@ -15,6 +23,9 @@ const NewsSection = () => {
     const topStories = [
         'U.S. kills dozens of ISIS fighters...',
         'Another top story headline here...',
+        'U.S. kills dozens of ISIS fighters...',
+        'U.S. kills dozens of ISIS fighters...',
+        'U.S. kills dozens of ISIS fighters...',
         // Add more top stories here
     ];
 
