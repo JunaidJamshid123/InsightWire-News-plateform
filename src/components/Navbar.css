@@ -24,12 +24,12 @@
 
 .search-bar input {
   padding: 5px;
-  border-radius: 4px;
+  border-left: 4px;
   border: none;
 }
 
 .search-bar button {
-  background-color: #4caf50;
+  background-color: #d40000;
   color: white;
   border: none;
   padding: 5px 10px;

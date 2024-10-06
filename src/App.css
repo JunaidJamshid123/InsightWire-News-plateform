@@ -1,6 +1,6 @@
-/* index.css or App.css */
 .App {
     font-family: Arial, sans-serif;
+    background-color: #f8f8eb;
 }
 
 .news-section-container {
@@ -11,11 +11,22 @@
 
 /* Balanced News Section (Left side) */
 .balanced-news {
-    width: 65%;
-    height: 250px;
+    width: 80%;
+    height: 450px;
     overflow-y: scroll;
     padding: 10px;
     border-right: 2px solid #ddd;
+
+    /* Hide scrollbar for Chrome, Safari, and Opera */
+    scrollbar-width: none;
+    /* For Firefox */
+    -ms-overflow-style: none;
+    /* For Internet Explorer and Edge */
+}
+
+.balanced-news::-webkit-scrollbar {
+    display: none;
+    /* For Chrome, Safari, and Opera */
 }
 
 .news-cards {
@@ -44,19 +55,45 @@
     margin-bottom: 10px;
 }
 
-/* Top Stories Section (Right side) */
-.top-stories {
-    width: 30%;
-    height: 250px;
-    overflow-y: scroll;
-    padding: 10px;
+.news-section-container {
+    display: flex;
+    justify-content: space-between;
+}
+.top-stories{
+    height: 450px;
+        overflow-y: scroll;
 }
 
+.top-stories::-webkit-scrollbar {
+    display: none;
+    /* For Chrome, Safari, and Opera */
+}
 .top-story {
+    display: flex;
+    align-items: center;
     margin-bottom: 15px;
 }
 
-.top-story h4 {
-    font-size: 1rem;
+.story-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    margin-right: 10px;
+}
+
+.story-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.story-details h4 {
+    margin: 0;
+    font-size: 14px;
     font-weight: bold;
 }
+
+.story-time {
+    font-size: 12px;
+    color: gray;
+}
+

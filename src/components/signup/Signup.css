@@ -1,5 +1,5 @@
-/* Login container styling */
-.login-container {
+/* Signup container styling */
+.signup-container {
     max-width: 400px;
     margin: 0 auto;
     padding: 20px;
@@ -10,17 +10,16 @@
     margin-bottom: 10px;
 }
 
-.login-heading {
+.signup-heading {
     font-size: 28px;
     margin-bottom: 20px;
     color: #333;
 }
 
-.login-form {
+.signup-form {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    /* Adds spacing between form groups */
 }
 
 .form-group {
@@ -32,9 +31,9 @@
 .form-group label {
     font-size: 16px;
     margin-bottom: 5px;
-    font-style:normal;
-    color:black;
-    font-weight:bold;
+    font-style: normal;
+    color: black;
+    font-weight: bold;
 }
 
 .form-group input {
@@ -46,7 +45,7 @@
     box-sizing: border-box;
 }
 
-.login-button {
+.signup-button {
     padding: 10px;
     font-size: 16px;
     width: 100%;
@@ -57,24 +56,26 @@
     cursor: pointer;
 }
 
-.login-button:hover {
+.signup-button:hover {
     background-color: #444;
 }
-.span{
+
+.span {
     color: red;
 }
-.signup-text {
+
+.login-text {
     margin-top: 15px;
     font-size: 14px;
     color: #555;
 }
 
-.signup-text a {
+.login-text a {
     color: #2e2f33;
     text-decoration: none;
     font-weight: bold;
 }
 
-.signup-text a:hover {
+.login-text a:hover {
     text-decoration: underline;
 }

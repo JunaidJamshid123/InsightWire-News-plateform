@@ -1,0 +1,41 @@
+/* Container for the headline component */
+.headline-component {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    /* Set maximum width for the component */
+}
+
+/* Image styling */
+.headline-image {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+/* Styling for the clickable link */
+.headline-link {
+    text-decoration: none;
+    color: white;
+    /* Change text color to white */
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    /* Semi-transparent background over image */
+}
+
+/* Text styling */
+.headline-text {
+    font-size: 1.5rem;
+    font-weight: bold;
+    
+}
+
+/* Hover effect */
+.headline-link:hover {
+    background: rgba(0, 0, 0, 0.7);
+    /* Darken background on hover */
+}

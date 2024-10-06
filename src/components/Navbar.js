@@ -3,7 +3,7 @@ import './Navbar.css'; // Ensure the CSS file styles the components appropriatel
 import newsLogo from './Images/news_logo.png'; // Correct image import
 import searchIcon from './Images/search.png'; // Correct image import
 
-const Navbar = () => {
+const Navbar = ({ onNavClick }) => {
   return (
     <nav className="navbar">
       {/* Logo Section */}
@@ -14,7 +14,13 @@ const Navbar = () => {
       {/* Navigation Links */}
       <ul className="nav-links">
         {['News', 'Blog', 'Topics', 'Media Bias', 'Misinformation', 'Schools', 'Services', 'Invest'].map((link, index) => (
-          <li key={index}>{link}</li>
+          <li 
+            key={index}
+            onClick={() => link === 'News' ? onNavClick('news') : null} // Trigger navigation to the news section when 'News' is clicked
+            className={link === 'News' ? 'clickable-link' : ''}
+          >
+            {link}
+          </li>
         ))}
       </ul>
       

@@ -3,9 +3,12 @@ import NewsCard from './NewsCard';
 import TopStories from './TopStories';
 import demo1 from './Images/demo1.jpeg';
 import demo2 from './Images/demo2.jpeg';
-
+import demo3 from './Images/local1.jpg';
+import demo4 from './Images/local2.png';
 
 const NewsSection = () => {
+
+
     const newsCards = [
         {
             image: demo2, // replace with actual URLs
@@ -21,14 +24,37 @@ const NewsSection = () => {
     ];
 
     const topStories = [
-        'U.S. kills dozens of ISIS fighters...',
-        'Another top story headline here...',
-        'U.S. kills dozens of ISIS fighters...',
-        'U.S. kills dozens of ISIS fighters...',
-        'U.S. kills dozens of ISIS fighters...',
-        // Add more top stories here
-    ];
-
+        {
+            image: demo3,
+            title: 'PTI protests hit public life in Pindi, Islamabad...',
+            time: '15 hours ago'
+        },
+        {
+            image: demo4,
+            title: 'Murree Road sit-in: Jamaat-e-Islami refuses to back down on...',
+            time: '10 hours ago'
+        },
+         {
+            image: demo4,
+            title: 'Murree Road sit-in: Jamaat-e-Islami refuses to back down on...',
+            time: '10 hours ago'
+        },
+         {
+            image: demo3,
+            title: 'PTI protests hit public life in Pindi, Islamabad...',
+            time: '15 hours ago'
+        },
+         {
+            image: demo4,
+            title: 'Murree Road sit-in: Jamaat-e-Islami refuses to back down on...',
+            time: '10 hours ago'
+        },
+         {
+            image: demo3,
+            title: 'PTI protests hit public life in Pindi, Islamabad...',
+            time: '15 hours ago'
+        },
+    ]
     return (
         <div className="news-section-container">
             {/* Left section for balanced news */}
@@ -47,14 +73,22 @@ const NewsSection = () => {
             </div>
 
             {/* Right section for top stories */}
+            <div className="news-section-container">
+            {/* Right section for top stories */}
             <div className="top-stories">
-                <h2>Top Stories</h2>
+                <h2>Local News</h2>
                 <div className="top-stories-list">
                     {topStories.map((story, index) => (
-                        <TopStories key={index} title={story} />
+                        <TopStories
+                            key={index}
+                            title={story.title}
+                            image={story.image}
+                            time={story.time}
+                        />
                     ))}
                 </div>
             </div>
+        </div>
         </div>
     );
 };
