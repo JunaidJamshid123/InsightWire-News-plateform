@@ -6,7 +6,7 @@ const NewsCard = ({ image, title, description }) => {
             <img src={image} alt={title} className="news-image" />
             <div className="news-content">
                 <h3>{title}</h3>
-                <p>{description}</p>
+                <p className="news-description">{description}</p> {/* Updated class */}
             </div>
         </div>
     );

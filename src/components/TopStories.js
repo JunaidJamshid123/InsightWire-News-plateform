@@ -5,7 +5,7 @@ const TopStories = ({ title, image, time }) => {
         <div className="top-story">
             <img src={image} alt={title} className="story-image" />
             <div className="story-details">
-                <h4>{title}</h4>
+                <h4 className="story-title">{title}</h4> {/* Updated class for title */}
                 <p className="story-time">{time}</p>
             </div>
         </div>
