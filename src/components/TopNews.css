@@ -1,0 +1,61 @@
+/* Container styles */
+.top-news-container {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    /* Adjust height as per your needs */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    /* Smooth corner */
+    overflow: hidden;
+}
+
+/* Overlay for better text visibility */
+.top-news-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    /* Dark overlay */
+    z-index: 1;
+}
+
+/* Content container */
+.content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: white;
+    /* Text color */
+    padding: 20px;
+}
+
+/* Label styling */
+.label {
+    display: inline-block;
+    background-color: #f0d77d;
+    /* Background color for the label */
+    color: #333;
+    /* Text color for the label */
+    font-weight: bold;
+    font-size: 0.9rem;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+/* Heading styling */
+.heading {
+    font-size: 2rem;
+    font-weight: bold;
+    line-height: 1.4;
+    margin: 0;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+}

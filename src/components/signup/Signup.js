@@ -1,35 +1,40 @@
 import React from 'react';
-import './Signup.css'; // You can use this CSS for styling the component
+import './Signup.css'; // Keep using this CSS file
 
 const Signup = () => {
   return (
     <div className="signup-container">
       <h2 className="signup-heading">Sign Up</h2>
+      <p className="signup-subheading">Welcome ! Please Register your new account.</p>
       <form className="signup-form">
         <div className="form-group">
-          <label htmlFor="username">User Name<span className="span">*</span></label>
-          <input type="text" id="username" name="username" placeholder="Enter your user name" required />
+          <input type="text" id="first-name" name="first-name" placeholder="First Name" required />
         </div>
         <div className="form-group">
-          <label htmlFor="email">Email Address<span className="span">*</span></label>
-          <input type="email" id="email" name="email" placeholder="Enter your email" required />
+          <input type="text" id="last-name" name="last-name" placeholder="Last Name" required />
         </div>
         <div className="form-group">
-          <label htmlFor="password">Password<span className="span">*</span></label>
-          <input type="password" id="password" name="password" placeholder="Enter your password" required />
+          <input type="email" id="email" name="email" placeholder="Email" required />
         </div>
         <div className="form-group">
-          <label htmlFor="confirm-password">Confirm Password<span className="span">*</span></label>
-          <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required />
+          <input type="date" id="birth-date" name="birth-date" placeholder="Birth Date" required />
         </div>
         <div className="form-group">
-          <label htmlFor="location">Location</label>
-          <input type="text" id="location" name="location" placeholder="Enter your location" />
+          <input type="tel" id="phone" name="phone" placeholder="Phone Number" required />
+        </div>
+        <div className="form-group">
+          <input type="text" id="country" name="country" placeholder="country" required />
+        </div>
+        <div className="form-group">
+          <input type="password" id="password" name="password" placeholder="Password" required />
+        </div>
+        <div className="form-group">
+          <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm Password" required />
         </div>
         <button type="submit" className="signup-button">Sign Up</button>
       </form>
       <p className="login-text">
-        Already have an account? <a href="/login">Log In Here</a>
+        Already have an account? <a href="/login">Log In</a>
       </p>
     </div>
   );

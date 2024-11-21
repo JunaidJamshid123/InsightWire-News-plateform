@@ -5,62 +5,65 @@ import demo1 from './Images/demo1.jpeg';
 import demo2 from './Images/demo2.jpeg';
 import demo3 from './Images/local1.jpg';
 import demo4 from './Images/local2.png';
+import './NewsSection.css';
 
 const NewsSection = () => {
-
-
     const newsCards = [
         {
-            image: demo2, // replace with actual URLs
+            image: demo2,
             title: 'The Significance of Polish American Voters...',
-            description: 'Many B movies of the 1940s, 50s, and 60s utilized the "spinning newspaper" effect to narrate important plot points that occurred offscreen. The effect necessitated the appearance of a realistic front page, which consisted of a main headline relevant to the plot, and several smaller headlines used as filler. A large number of these spinning newspapers included stories titled "New Petitions Against Tax" and "Building Code Under Fire'
+            description:
+                'Many B movies of the 1940s, 50s, and 60s utilized the "spinning newspaper" effect...',
         },
-         {
-            image: demo1, // replace with actual URLs
-            title: 'Israil Attack on Hazbullah',
-            description: 'Many B movies of the 1940s, 50s, and 60s utilized the "spinning newspaper" effect to narrate important plot points that occurred offscreen. The effect necessitated the appearance of a realistic front page, which consisted of a main headline relevant to the plot, and several smaller headlines used as filler. A large number of these spinning newspapers included stories titled "New Petitions Against Tax" and "Building Code Under Fire'
+        {
+            image: demo1,
+            title: 'Israel Attack on Hezbollah',
+            description:
+                'Many B movies of the 1940s, 50s, and 60s utilized the "spinning newspaper" effect...',
         },
-        // Add more news cards here
+        {
+            image: demo2,
+            title: 'Elections Around the World',
+            description:
+                'An analysis of voter behavior and trends in global elections...',
+        },
+        {
+            image: demo1,
+            title: 'Conflict in the Middle East',
+            description:
+                'Examining the latest developments in the region and their impact...',
+        },
     ];
 
     const topStories = [
         {
             image: demo3,
             title: 'PTI protests hit public life in Pindi, Islamabad...',
-            time: '15 hours ago'
+            time: '15 hours ago',
         },
         {
             image: demo4,
-            title: 'Murree Road sit-in: Jamaat-e-Islami refuses to back down on...',
-            time: '10 hours ago'
+            title: 'Murree Road sit-in: Jamaat-e-Islami refuses to back down...',
+            time: '10 hours ago',
         },
-         {
+        {
             image: demo4,
-            title: 'Murree Road sit-in: Jamaat-e-Islami refuses to back down on...',
-            time: '10 hours ago'
+            title: 'Local News Updates: Weather and Events...',
+            time: '8 hours ago',
         },
-         {
+        {
             image: demo3,
-            title: 'PTI protests hit public life in Pindi, Islamabad...',
-            time: '15 hours ago'
+            title: 'Breaking: International Conference Highlights...',
+            time: '5 hours ago',
         },
-         {
-            image: demo4,
-            title: 'Murree Road sit-in: Jamaat-e-Islami refuses to back down on...',
-            time: '10 hours ago'
-        },
-         {
-            image: demo3,
-            title: 'PTI protests hit public life in Pindi, Islamabad...',
-            time: '15 hours ago'
-        },
-    ]
+    ];
+
     return (
         <div className="news-section-container">
             {/* Left section for balanced news */}
             <div className="balanced-news">
-                <h2>Balanced News from the Left, Center and Right</h2>
-                <div className="news-cards">
+                <h2>Balanced News from the Left, Center, and Right</h2>
+                <div className="news-cards-grid">
                     {newsCards.map((news, index) => (
                         <NewsCard
                             key={index}
@@ -73,10 +76,8 @@ const NewsSection = () => {
             </div>
 
             {/* Right section for top stories */}
-            <div className="news-section-container">
-            {/* Right section for top stories */}
             <div className="top-stories">
-                <h2>Local News</h2>
+                <h2>Top Stories</h2>
                 <div className="top-stories-list">
                     {topStories.map((story, index) => (
                         <TopStories
@@ -88,7 +89,6 @@ const NewsSection = () => {
                     ))}
                 </div>
             </div>
-        </div>
         </div>
     );
 };

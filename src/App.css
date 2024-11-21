@@ -1,26 +1,27 @@
 /* General styles for the app */
 .App {
     font-family: Arial, sans-serif;
-    background-color: #f8f8eb;
+    background-color: #ffffff;
 }
 
+/*
 .news-section-container {
     display: flex;
     justify-content: space-between;
     margin: 20px;
 }
 
-/* Balanced News Section (Left side) */
+
 .balanced-news {
     width: 80%;
     height: 450px;
-    /* Set height to 450px */
+  
     overflow-y: scroll;
     padding: 10px;
     border-right: 2px solid #ddd;
 }
 
-/* Hide scrollbar for Chrome, Safari, and Opera */
+
 .balanced-news::-webkit-scrollbar {
     display: none;
 }
@@ -52,7 +53,7 @@
     margin-bottom: 10px;
 }
 
-/* Truncate description after 5 lines and add ellipsis */
+
 .news-description {
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -63,14 +64,13 @@
     max-height: calc(1.4em * 5);
 }
 
-/* Top Stories section */
+
 .top-stories {
     height: 450px;
-    /* Set height to 450px to match the Balanced News Section */
+    
     overflow-y: scroll;
 }
 
-/* Hide scrollbar for Chrome, Safari, and Opera */
 .top-stories::-webkit-scrollbar {
     display: none;
 }
@@ -93,7 +93,7 @@
     flex-direction: column;
 }
 
-/* Truncate title after 1.5 lines and add ellipsis */
+
 .story-title {
     font-size: 14px;
     font-weight: bold;
@@ -110,3 +110,4 @@
     font-size: 12px;
     color: gray;
 }
+    */
