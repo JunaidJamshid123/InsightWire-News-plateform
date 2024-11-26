@@ -1,43 +1,48 @@
-import React from 'react';
-import './Login.css'; // Styling will be updated below
+import React, { useState } from 'react';
+import './Login.css';
 
 const Login = () => {
+  const [formData, setFormData] = useState({ email: '', password: '' });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      const result = await response.json();
+      if (response.ok) {
+        alert('Login successful!');
+        console.log('Token:', result.token);
+      } else {
+        alert(result.message || 'Login failed');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred during login.');
+    }
+  };
+
   return (
     <div className="login-container">
       <h2 className="login-heading">Log In</h2>
-      <p className="login-subheading">Welcome back! Please log in to your account.</p>
-      <form className="login-form">
+      <form className="login-form" onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="email">
-            Enter Email Address<span className="required">*</span>
-          </label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            placeholder="Enter your email"
-            required
-          />
+          <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
         </div>
         <div className="form-group">
-          <label htmlFor="password">
-            Password<span className="required">*</span>
-          </label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Enter your password"
-            required
-          />
+          <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
         </div>
-        <button type="submit" className="login-button">
-          Log In
-        </button>
+        <button type="submit" className="login-button">Log In</button>
       </form>
-      <p className="signup-text">
-        Don’t have an account? <a href="/signup">Sign Up Here</a>
-      </p>
     </div>
   );
 };

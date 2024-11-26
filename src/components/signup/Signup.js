@@ -1,35 +1,76 @@
-import React from 'react';
-import './Signup.css'; // Keep using this CSS file
+import React, { useState } from 'react';
+import './Signup.css';
 
 const Signup = () => {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    birthDate: '',
+    phone: '',
+    country: '',
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (formData.password !== formData.confirmPassword) {
+      alert('Passwords do not match!');
+      return;
+    }
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      const result = await response.json();
+      if (response.ok) {
+        alert('Signup successful!');
+      } else {
+        alert(result.message || 'Signup failed');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred during signup.');
+    }
+  };
+
   return (
     <div className="signup-container">
       <h2 className="signup-heading">Sign Up</h2>
-      <p className="signup-subheading">Welcome ! Please Register your new account.</p>
-      <form className="signup-form">
+      <p className="signup-subheading">Welcome! Please Register your new account.</p>
+      <form className="signup-form" onSubmit={handleSubmit}>
         <div className="form-group">
-          <input type="text" id="first-name" name="first-name" placeholder="First Name" required />
+          <input type="text" name="firstName" placeholder="First Name" onChange={handleChange} required />
         </div>
         <div className="form-group">
-          <input type="text" id="last-name" name="last-name" placeholder="Last Name" required />
+          <input type="text" name="lastName" placeholder="Last Name" onChange={handleChange} required />
         </div>
         <div className="form-group">
-          <input type="email" id="email" name="email" placeholder="Email" required />
+          <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
         </div>
         <div className="form-group">
-          <input type="date" id="birth-date" name="birth-date" placeholder="Birth Date" required />
+          <input type="date" name="birthDate" onChange={handleChange} required />
         </div>
         <div className="form-group">
-          <input type="tel" id="phone" name="phone" placeholder="Phone Number" required />
+          <input type="tel" name="phone" placeholder="Phone Number" onChange={handleChange} required />
         </div>
         <div className="form-group">
-          <input type="text" id="country" name="country" placeholder="country" required />
+          <input type="text" name="country" placeholder="Country" onChange={handleChange} required />
         </div>
         <div className="form-group">
-          <input type="password" id="password" name="password" placeholder="Password" required />
+          <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
         </div>
         <div className="form-group">
-          <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm Password" required />
+          <input type="password" name="confirmPassword" placeholder="Confirm Password" onChange={handleChange} required />
         </div>
         <button type="submit" className="signup-button">Sign Up</button>
       </form>
