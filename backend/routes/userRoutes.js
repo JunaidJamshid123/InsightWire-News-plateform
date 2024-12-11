@@ -1,17 +1,20 @@
 const express = require('express');
 const router = express.Router();
-const authenticateToken = require('../middleware/authMiddleware');  // Assuming this middleware is set up to authenticate the JWT
+const authenticateToken = require('../middleware/authMiddleware'); // Middleware to authenticate JWT
 
-// Example user profile route
+// User profile route
 router.get('/profile', authenticateToken, async (req, res) => {
   try {
-    // Assuming `req.user` contains the authenticated user details (from JWT)
+    // Extracting user details from the authenticated request
     const user = req.user;
+
     return res.json({
-      email: user.email,
-      username: user.username,
-      mobile: user.mobile,
-      country: user.country
+      id: user.id, // Unique user ID
+      firstName: user.firstName, // First name
+      lastName: user.lastName, // Last name
+      email: user.email, // Email address
+      phone: user.phone, // Phone number
+      country: user.country // Country
     });
   } catch (err) {
     console.error("Error fetching user profile:", err);

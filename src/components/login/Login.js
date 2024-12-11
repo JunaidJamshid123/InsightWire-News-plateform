@@ -28,37 +28,40 @@ const Login = () => {
 
   // Handle Login
   const handleLogin = async (e) => {
-    e.preventDefault();
-    setError(""); // Clear any previous error
+  e.preventDefault();
+  setError("");
 
-    if (!validateInput()) return;
+  if (!validateInput()) return;
 
-    setIsLoading(true);
-    try {
-      const response = await fetch(
-        process.env.REACT_APP_API_URL || "http://localhost:5000/api/auth/login",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        }
-      );
-
-      const result = await response.json();
-
-      if (response.ok) {
-        alert("Login successful! Redirecting to homepage...");
-        navigate("/"); // Redirect to home/root
-      } else {
-        setError(result.message || "Login failed. Please try again.");
+  setIsLoading(true);
+  try {
+    const response = await fetch(
+      process.env.REACT_APP_API_URL || "http://localhost:5000/api/auth/login",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
       }
-    } catch (err) {
-      console.error("Error during login:", err);
-      setError("An unexpected error occurred. Please try again later.");
-    } finally {
-      setIsLoading(false);
+    );
+
+    const result = await response.json();
+
+    if (response.ok) {
+      localStorage.setItem("token", result.token); // Store token
+      console.log(result.token);
+      alert("Login successful! Redirecting to homepage...");
+      navigate("/"); // Redirect to home/root
+    } else {
+      setError(result.message || "Login failed. Please try again.");
     }
-  };
+  } catch (err) {
+    console.error("Error during login:", err);
+    setError("An unexpected error occurred. Please try again later.");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   return (
     <div className="login-container">

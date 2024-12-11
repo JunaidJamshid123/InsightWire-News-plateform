@@ -3,8 +3,8 @@ import './Comments.css';
 
 const Comments = () => {
     const [comments, setComments] = useState([
-        { id: 1, username: "John Doe", comment: "This is very insightful!" },
-        { id: 2, username: "Jane Smith", comment: "I love the unbiased perspective here." },
+        { id: 1, username: "Junaid Jamshid", comment: "This is very insightful!" },
+        { id: 2, username: "Abdullah Khan", comment: "I love the unbiased perspective here." },
     ]);
     const [newComment, setNewComment] = useState("");
 
@@ -21,7 +21,7 @@ const Comments = () => {
 
     return (
         <div className="comments-section">
-            <h2 className="section-title">Comments</h2>
+            <h2 className="section-title">User Feedback</h2>
             <div className="add-comment">
                 <textarea
                     placeholder="Write your comment here..."

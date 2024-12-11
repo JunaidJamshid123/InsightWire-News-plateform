@@ -1,10 +1,18 @@
-import React from "react";
-import "./TopNews.css"; // External CSS file for styling
+'use client'
 
-const Top_News = () => {
+import React, { useEffect, useState } from "react"
+import "./TopNews.css"
+
+const TopNews = () => {
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    setIsVisible(true)
+  }, [])
+
   return (
     <div
-      className="top-news-container"
+      className={`top-news-container ${isVisible ? 'visible' : ''}`}
       style={{
         backgroundImage: "url('/headlineImage.jpg')", // Replace with your image path
       }}
@@ -16,7 +24,8 @@ const Top_News = () => {
         </h1>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Top_News;
+export default TopNews
+

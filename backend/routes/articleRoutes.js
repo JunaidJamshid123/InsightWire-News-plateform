@@ -2,7 +2,8 @@ const express = require("express");
 const {
     getAllArticles,
     getArticleById,
-    addFeedbackToArticle
+    addFeedbackToArticle,
+    getFeedbacksForArticle
 } = require("../controllers/articleController");
 
 const router = express.Router();
@@ -14,6 +15,9 @@ router.get("/", getAllArticles);
 router.get("/:id", getArticleById);
 
 // Route to add feedback to an article
+// Route to get all feedbacks for a specific article
+router.get("/:id/feedbacks", getFeedbacksForArticle);
+
 router.post("/:id/feedback", addFeedbackToArticle);
 
 module.exports = router;
