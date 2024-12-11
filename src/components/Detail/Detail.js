@@ -1,3 +1,4 @@
+// Details.js
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import './Detail.css';
@@ -53,7 +54,6 @@ const Details = () => {
     fetchArticle();
   }, [id]);
 
-  // Toggle favorite status when button is clicked
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite);
   };
@@ -70,7 +70,6 @@ const Details = () => {
       <img src={defaultImage} alt="Article Title" className="article-title-image" />
       <h1 className="article-title">{article.title}</h1>
 
-      {/* Like/ Add to Favorite Button */}
       <button
         onClick={toggleFavorite}
         className={`favorite-button ${isFavorite ? 'favorited' : ''}`}
@@ -78,14 +77,12 @@ const Details = () => {
         {isFavorite ? 'Added to Favorite' : 'Add to Favorite'}
       </button>
 
-      {/* Displaying the content array as paragraphs */}
       <div className="article-detail">
         {article.content.map((paragraph, index) => (
           <p key={index}>{paragraph}</p>
         ))}
       </div>
 
-      {/* Including Bias Visualization component */}
       <BiasVisualization />
 
       <div className="additional-section">
@@ -96,8 +93,8 @@ const Details = () => {
         </p>
       </div>
 
-      {/* Including Comments section */}
-      <Comments />
+      {/* Pass the article ID to the Comments component */}
+      <Comments articleId={id} />
     </div>
   );
 };

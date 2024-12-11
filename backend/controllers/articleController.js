@@ -68,9 +68,60 @@ const getFeedbacksForArticle = async (req, res) => {
     }
 };
 
+// Edit feedback
+const editFeedback = async (req, res) => {
+    const { id } = req.params; // Feedback ID
+    const { text, rating, isPublic } = req.body;
+
+    try {
+        // Find and update the feedback
+        const feedback = await Feedback.findByIdAndUpdate(
+            id,
+            { text, rating, isPublic },
+            { new: true, runValidators: true } // Return the updated document
+        );
+
+        if (!feedback) {
+            return res.status(404).json({ success: false, message: "Feedback not found" });
+        }
+
+        res.status(200).json({ success: true, message: "Feedback updated successfully", data: feedback });
+    } catch (error) {
+        console.error("Error updating feedback:", error);
+        res.status(500).json({ success: false, message: "Failed to update feedback", error: error.message });
+    }
+};
+
+// Delete feedback
+const deleteFeedback = async (req, res) => {
+    const { id } = req.params; // Feedback ID
+
+    try {
+        // Find and delete the feedback
+        const feedback = await Feedback.findByIdAndDelete(id);
+
+        if (!feedback) {
+            return res.status(404).json({ success: false, message: "Feedback not found" });
+        }
+
+        // Remove feedback reference from the associated article
+        await Article.updateMany(
+            { feedbacks: id },
+            { $pull: { feedbacks: id } }
+        );
+
+        res.status(200).json({ success: true, message: "Feedback deleted successfully" });
+    } catch (error) {
+        console.error("Error deleting feedback:", error);
+        res.status(500).json({ success: false, message: "Failed to delete feedback", error: error.message });
+    }
+};
+
 module.exports = {
     getAllArticles,
     getArticleById,
     addFeedbackToArticle,
-    getFeedbacksForArticle, // Export the new function
+    getFeedbacksForArticle,
+    editFeedback, // Export edit feedback function
+    deleteFeedback // Export delete feedback function
 };
