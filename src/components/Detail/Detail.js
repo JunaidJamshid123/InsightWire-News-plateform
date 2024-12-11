@@ -1,8 +1,17 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import './Detail.css';
 import Comments from '../Comments/Comments'; // Import the Comments component
+import defaultImage from '../Images/defaultImage.png';
 
-const BiasVisualization = ({ biasData }) => {
+const BiasVisualization = () => {
+  // Hardcoded bias data for illustration
+  const biasData = {
+    left: 30,
+    center: 40,
+    right: 30
+  };
+
   return (
     <div className="bias-visualization">
       <p className="bias-label">Political Bias Distribution:</p>
@@ -22,33 +31,63 @@ const BiasVisualization = ({ biasData }) => {
 };
 
 const Details = () => {
-  const article = {
-    source: 'AllSides',
-    publicationDate: 'October 1st, 2024',
-    title: 'Israel Launches ‘Targeted’ Ground Offensive Into Southern Lebanon',
-    detail:
-      'The Israel Defense Forces (IDF) reportedly launched a “targeted and limited” ground incursion into southern Lebanon, targeting Hezbollah sites late on Monday. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages.The Israel Defense Forces (IDF) reportedly launched a “targeted and limited” ground incursion into southern Lebanon, targeting Hezbollah sites late on Monday. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages.',
-    biasData: { left: 33, center: 33, right: 34 },
-    titleImage: process.env.PUBLIC_URL + '/article_detail_image.jpeg', // Example title image
+  const { id } = useParams(); // Get article ID from URL
+  const [article, setArticle] = useState(null);
+  const [isFavorite, setIsFavorite] = useState(false); // State for tracking favorite status
+
+  useEffect(() => {
+    const fetchArticle = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/articles/${id}`);
+        const data = await response.json();
+        if (data.success) {
+          setArticle(data.data); // Assuming data is in 'data'
+        } else {
+          console.error('Article not found');
+        }
+      } catch (error) {
+        console.error('Error fetching article details:', error);
+      }
+    };
+
+    fetchArticle();
+  }, [id]);
+
+  // Toggle favorite status when button is clicked
+  const toggleFavorite = () => {
+    setIsFavorite(!isFavorite);
   };
+
+  if (!article) return <p>Loading article...</p>;
 
   return (
     <div className="details-container">
       <div className="article-header">
-        <span className="article-source">{article.source}</span>
-        <span className="article-date"> | {article.publicationDate}</span>
+        <span className="article-source">{article.publication}</span>
+        <span className="article-date"> | {article.date || 'Unknown Date'}</span>
       </div>
 
-      {/* Title Image */}
-      <img src={article.titleImage} alt="Article Title" className="article-title-image" />
+      <img src={defaultImage} alt="Article Title" className="article-title-image" />
       <h1 className="article-title">{article.title}</h1>
 
-      <p className="article-detail">{article.detail}</p>
+      {/* Like/ Add to Favorite Button */}
+      <button
+        onClick={toggleFavorite}
+        className={`favorite-button ${isFavorite ? 'favorited' : ''}`}
+      >
+        {isFavorite ? 'Added to Favorite' : 'Add to Favorite'}
+      </button>
 
-      {/* Political Bias Visualization */}
-      <BiasVisualization biasData={article.biasData} />
+      {/* Displaying the content array as paragraphs */}
+      <div className="article-detail">
+        {article.content.map((paragraph, index) => (
+          <p key={index}>{paragraph}</p>
+        ))}
+      </div>
 
-      {/* Political Outcome Section */}
+      {/* Including Bias Visualization component */}
+      <BiasVisualization />
+
       <div className="additional-section">
         <h2>Political Outcomes</h2>
         <p>
@@ -57,7 +96,7 @@ const Details = () => {
         </p>
       </div>
 
-      {/* Comments Section */}
+      {/* Including Comments section */}
       <Comments />
     </div>
   );

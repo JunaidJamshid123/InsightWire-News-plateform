@@ -16,7 +16,26 @@ const Navbar = ({ onNavClick }) => {
         {['News', 'Blog', 'Topics', 'Media Bias', 'Misinformation', 'Schools', 'Services', 'Invest'].map((link, index) => (
           <li 
             key={index}
-            onClick={() => link === 'News' ? onNavClick('news') : null} // Trigger navigation to the news section when 'News' is clicked
+            onClick={() => {
+              // Trigger navigation based on the link clicked
+              if (link === 'News') {
+                onNavClick('news');
+              } else if (link === 'Blog') {
+                onNavClick('blog');
+              } else if (link === 'Topics') {
+                onNavClick('topics');
+              } else if (link === 'Media Bias') {
+                onNavClick('media-bias');
+              } else if (link === 'Misinformation') {
+                onNavClick('misinformation');
+              } else if (link === 'Schools') {
+                onNavClick('schools');
+              } else if (link === 'Services') {
+                onNavClick('services');
+              } else if (link === 'Invest') {
+                onNavClick('invest');
+              }
+            }}
             className={link === 'News' ? 'clickable-link' : ''}
           >
             {link}

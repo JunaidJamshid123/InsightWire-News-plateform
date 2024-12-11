@@ -106,3 +106,29 @@
     color: #444;
     line-height: 1.6;
 }
+
+.favorite-button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.favorite-button:hover {
+    background-color: #45a049;
+}
+
+.favorite-button.favorited {
+    background-color: #ff6347;
+    /* Red color for favorited articles */
+}
+
+.favorite-button.favorited:hover {
+    background-color: #e55347;
+    /* Darker red for hover */
+}

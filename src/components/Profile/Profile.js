@@ -1,8 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Profile.css';
 
 function Profile() {
   const [profilePicture, setProfilePicture] = useState(null);
+  const [userDetails, setUserDetails] = useState({
+    email: '',
+    username: '',
+    mobile: '',
+    country: ''
+  });
+
+  // Fetch logged-in user data
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        // Get the token from localStorage or wherever you store it
+        const token = localStorage.getItem('token');  // Example of getting the token from localStorage
+        
+        if (!token) {
+          console.error("No token found, user is not logged in.");
+          return;
+        }
+
+        const response = await fetch('http://localhost:5000/api/user/profile', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,  // Send the token in the Authorization header
+          },
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          console.error("Error:", error.message);
+        } else {
+          const data = await response.json();
+          console.log("User profile:", data);
+
+          // Set the user details in state
+          setUserDetails({
+            email: data.email,
+            username: data.username,
+            mobile: data.mobile,
+            country: data.country
+          });
+        }
+      } catch (err) {
+        console.error("Error fetching profile:", err);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
 
   const handlePictureUpload = (e) => {
     const file = e.target.files[0];
@@ -32,17 +80,16 @@ function Profile() {
             style={{ display: 'none' }}
           />
         </div>
-        <h2 className="username">Junaid Jamshid</h2>
+        <h2 className="username">{userDetails.username}</h2>
       </div>
 
       <div className="details-section">
         <h3>Profile Details</h3>
         <div className="user-details">
-          <p><strong>Email:</strong> junaid@example.com</p>
-          <p><strong>Username:</strong> junaidjamshid</p>
-          <p><strong>Mobile:</strong> +92 300 1234567</p>
-          <p><strong>Country:</strong> Pakistan</p>
-      
+          <p><strong>Email:</strong> {userDetails.email}</p>
+          <p><strong>Username:</strong> {userDetails.username}</p>
+          <p><strong>Mobile:</strong> {userDetails.mobile}</p>
+          <p><strong>Country:</strong> {userDetails.country}</p>
         </div>
       </div>
     </div>
