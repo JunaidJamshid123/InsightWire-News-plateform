@@ -35,7 +35,7 @@ function App() {
         
         <Routes>
           <Route path="/" element={<><Top_News /><NewsSection /></>} />
-          <Route path="/news" element={<NewsSection />} />
+          <Route path="/news" element={<><Top_News /><NewsSection /></>} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/article/:id" element={<Details />} />
