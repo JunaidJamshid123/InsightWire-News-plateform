@@ -2,136 +2,69 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
-// Signup
-const signup = async (req, res) => {
-  console.log("Request Recived");
-  try {
-    const { firstName, lastName, email, password, birthDate, phone, country } = req.body;
+// Register User
+exports.registerUser = async (req, res) => {
+    try {
+        const { userName, email, password, authType, googleId, googleProfile, profilePic } = req.body;
 
-    // Validate required fields
-    if (!firstName || !lastName || !email || !password || !phone || !country) {
-      return res.status(400).json({ message: "All fields are required" });
+        if (!email || !authType) return res.status(400).json({ msg: "Missing fields" });
+
+        const existingUser = await User.findOne({ email });
+        if (existingUser) return res.status(400).json({ msg: "User already exists" });
+
+        let newUser;
+        if (authType === "local") {
+            if (!password) return res.status(400).json({ msg: "Password is required for local authentication" });
+            const hashedPassword = await bcrypt.hash(password, 10);
+            newUser = new User({ userName, email, password: hashedPassword, authType, profilePic });
+        } else if (authType === "google") {
+            if (!googleId || !googleProfile) return res.status(400).json({ msg: "Google authentication details required" });
+            newUser = new User({ userName, email, googleId, googleProfile, authType, profilePic });
+        } else {
+            return res.status(400).json({ msg: "Invalid authentication type" });
+        }
+
+        await newUser.save();
+        res.status(201).json({ msg: "User registered successfully", user: newUser });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
     }
-
-    // Check if email already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "Email already exists" });
-    }
-
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 12);
-
-    // Create the user
-    const user = await User.create({
-      firstName,
-      lastName,
-      email,
-      password: hashedPassword,
-      birthDate,
-      phone,
-      country,
-      favoriteArticles: [], // Initialize as an empty array during signup
-    });
-
-    // Respond with success message
-    res.status(201).json({ message: "User created successfully", user });
-  } catch (error) {
-    console.error("Signup error:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
 };
 
+// Login User
+exports.loginUser = async (req, res) => {
+    try {
+        const { email, password, authType, googleId } = req.body;
 
-// Login
-/*
-const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+        const user = await User.findOne({ email });
+        if (!user) return res.status(400).json({ msg: "User not found" });
 
-    if (!email || !password) {
-      return res.status(400).json({ message: "Email and password are required" });
+        if (authType === "local") {
+            if (!password) return res.status(400).json({ msg: "Password is required for local login" });
+
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) return res.status(400).json({ msg: "Invalid credentials" });
+        } else if (authType === "google") {
+            if (!googleId || googleId !== user.googleId) return res.status(400).json({ msg: "Invalid Google authentication" });
+        } else {
+            return res.status(400).json({ msg: "Invalid authentication type" });
+        }
+
+        const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "7d" });
+        res.json({ token, user });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
     }
-
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
-    if (!isPasswordCorrect) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
-
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-    res.status(200).json({ message: "Login successful", token });
-  } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({ message: "Failed to login", error: error.message });
-  }
-};
-*/
-
-
-const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({ message: "Email and password are required" });
-    }
-
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(401).json({ message: "Invalid email or password" });
-    }
-
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
-    if (!isPasswordCorrect) {
-      return res.status(401).json({ message: "Invalid email or password" });
-    }
-
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-    res.status(200).json({ message: "Login successful", token });
-  } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
 };
 
+// Get User Profile
+exports.getUserProfile = async (req, res) => {
+    try {
+        const user = await User.findById(req.user).select("-password");
+        if (!user) return res.status(404).json({ msg: "User not found" });
 
-
-// Add to Favorites
-const addFavoriteArticle = async (req, res) => {
-  try {
-    const { userId } = req.user; // Assume user ID is added to req.user by middleware
-    const { articleId, title, url } = req.body;
-
-    if (!articleId || !title || !url) {
-      return res.status(400).json({ message: "Article ID, title, and URL are required" });
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
     }
-
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const isArticleAlreadyFavorite = user.favoriteArticles.some(
-      (article) => article.articleId.toString() === articleId
-    );
-
-    if (isArticleAlreadyFavorite) {
-      return res.status(400).json({ message: "Article is already in favorites" });
-    }
-
-    user.favoriteArticles.push({ articleId, title, url });
-    await user.save();
-
-    res.status(200).json({ message: "Article added to favorites", favoriteArticles: user.favoriteArticles });
-  } catch (error) {
-    console.error("Add favorite article error:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
 };
-
-module.exports = { signup, login, addFavoriteArticle };

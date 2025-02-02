@@ -1,31 +1,16 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/User'); // Import User model (or use it according to your project structure)
+const jwt = require("jsonwebtoken");
 
-// Middleware to authenticate token
-const authenticateToken = async (req, res, next) => {
-  const authHeader = req.header('Authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ message: 'No token provided or invalid format' });
-  }
-
-  const token = authHeader.replace('Bearer ', '');
-  jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
-    if (err) {
-      return res.status(403).json({ message: 'Authentication failed' });
-    }
+const authMiddleware = (req, res, next) => {
+    const token = req.header("x-auth-token");
+    if (!token) return res.status(401).json({ msg: "No token, authorization denied" });
 
     try {
-      const user = await User.findById(decoded.id);
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-
-      req.user = user; // Attach user info to request
-      next();
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded.id; // Attach user ID to request object
+        next(); // Proceed to the next middleware or route handler
     } catch (error) {
-      res.status(500).json({ message: 'Internal Server Error' });
+        res.status(401).json({ msg: "Token is not valid" });
     }
-  });
 };
 
-module.exports = authenticateToken;
+module.exports = authMiddleware;
