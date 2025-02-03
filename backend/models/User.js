@@ -1,27 +1,13 @@
 const mongoose = require("mongoose");
+const UserSchema = new mongoose.Schema({
+    userName: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String }, // Only for 'local' authentication
+    profilePic: { type: String },
+    authType: { type: String, enum: ["local", "google"], required: true },
+    googleId: { type: String }, // Only for Google auth
+    googleProfile: { type: Object }, // Store Google profile details if needed
+    role: { type: String, enum: ["user", "admin"], default: "user" }
+}, { timestamps: true });
 
-const userSchema = new mongoose.Schema(
-  {
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
-    email: { type: String, unique: true, required: true },
-    password: { type: String },
-    birthDate: { type: Date },
-    phone: { type: String, required: true },
-    country: { type: String },
-    profilePicture: {
-      type: String,
-      default: "https://via.placeholder.com/150", // Default placeholder image
-    },
-    favoriteArticles: [
-      {
-        articleId: { type: mongoose.Schema.Types.ObjectId, ref: "Article" }, // Assuming you have an Article model
-        title: { type: String, required: true },
-        url: { type: String, required: true },
-      },
-    ],
-  },
-  { timestamps: true }
-);
-
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("User", UserSchema);

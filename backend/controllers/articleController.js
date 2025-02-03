@@ -1,127 +1,79 @@
-const Article = require("../models/Article");
-const Feedback = require("../models/Feedback");
+const ScrapedArticle = require("../models/ScrapedArticle");
+const CategorizedArticle = require("../models/CategorizedArticle");
 
-const getAllArticles = async (req, res) => {
+// Get all scraped articles with feedback populated
+exports.getScrapedArticles = async (req, res) => {
     try {
-        const articles = await Article.find().limit(25); // Limit the response to 25 articles
-        res.status(200).json({ success: true, data: articles });
+        const articles = await ScrapedArticle.find().populate("feedback");
+        res.json(articles);
     } catch (error) {
-        console.error("Error fetching articles:", error);
-        res.status(500).json({ success: false, message: "Failed to fetch articles", error: error.message });
+        res.status(500).json({ msg: error.message });
     }
 };
 
-// Get a single article by ID
-const getArticleById = async (req, res) => {
-    const { id } = req.params;
+// Create a new scraped article
+exports.createScrapedArticle = async (req, res) => {
     try {
-        const article = await Article.findById(id);
-        if (!article) {
-            return res.status(404).json({ success: false, message: "Article not found" });
-        }
-        res.status(200).json({ success: true, data: article });
-    } catch (error) {
-        res.status(500).json({ success: false, message: "Failed to fetch the article", error: error.message });
-    }
-};
+        const { title, location, url, content, source, date, biasType } = req.body;
 
-// Add feedback to an article
-const addFeedbackToArticle = async (req, res) => {
-    const { id } = req.params;
-    const { text, user, rating, isPublic } = req.body;
-
-    try {
-        const article = await Article.findById(id);
-        if (!article) {
-            return res.status(404).json({ success: false, message: "Article not found" });
+        if (!title || !url || !content || !source || !date || !biasType) {
+            return res.status(400).json({ msg: "Missing required fields" });
         }
 
-        const feedback = new Feedback({ text, user, rating, isPublic });
-        await feedback.save();
-
-        // Associate feedback with the article
-        article.feedbacks = article.feedbacks || [];
-        article.feedbacks.push(feedback._id);
-        await article.save();
-
-        res.status(201).json({ success: true, message: "Feedback added successfully", data: feedback });
-    } catch (error) {
-        console.error("Error adding feedback:", error);
-        res.status(500).json({ success: false, message: "Failed to add feedback", error: error.message });
-    }
-};
-
-// Get all feedback for a specific article
-const getFeedbacksForArticle = async (req, res) => {
-    const { id } = req.params;
-    try {
-        // Find the article and populate its feedbacks field
-        const article = await Article.findById(id).populate("feedbacks");
-        if (!article) {
-            return res.status(404).json({ success: false, message: "Article not found" });
+        const existingArticle = await ScrapedArticle.findOne({ url });
+        if (existingArticle) {
+            return res.status(400).json({ msg: "Article with this URL already exists" });
         }
 
-        res.status(200).json({ success: true, data: article.feedbacks });
+        const newArticle = new ScrapedArticle({ title, location, url, content, source, date, biasType });
+        await newArticle.save();
+        res.status(201).json(newArticle);
     } catch (error) {
-        console.error("Error fetching feedbacks:", error);
-        res.status(500).json({ success: false, message: "Failed to fetch feedbacks", error: error.message });
+        res.status(500).json({ msg: error.message });
     }
 };
 
-// Edit feedback
-const editFeedback = async (req, res) => {
-    const { id } = req.params; // Feedback ID
-    const { text, rating, isPublic } = req.body;
-
+// Get all categorized articles with associated scraped articles
+exports.getCategorizedArticles = async (req, res) => {
     try {
-        // Find and update the feedback
-        const feedback = await Feedback.findByIdAndUpdate(
-            id,
-            { text, rating, isPublic },
-            { new: true, runValidators: true } // Return the updated document
-        );
+        const categorizedArticles = await CategorizedArticle.find()
+            .populate("articles")
+            .populate("background");
+        res.json(categorizedArticles);
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
 
-        if (!feedback) {
-            return res.status(404).json({ success: false, message: "Feedback not found" });
+// Create a new categorized article
+exports.createCategorizedArticle = async (req, res) => {
+    try {
+        const { title, summary, articles, background, newsAnalytics } = req.body;
+
+        if (!title || !summary) {
+            return res.status(400).json({ msg: "Missing required fields" });
         }
 
-        res.status(200).json({ success: true, message: "Feedback updated successfully", data: feedback });
+        const newCategorizedArticle = new CategorizedArticle({ title, summary, articles, background, newsAnalytics });
+        await newCategorizedArticle.save();
+        res.status(201).json(newCategorizedArticle);
     } catch (error) {
-        console.error("Error updating feedback:", error);
-        res.status(500).json({ success: false, message: "Failed to update feedback", error: error.message });
+        res.status(500).json({ msg: error.message });
     }
 };
 
-// Delete feedback
-const deleteFeedback = async (req, res) => {
-    const { id } = req.params; // Feedback ID
-
+// Get a specific categorized article by ID
+exports.getCategorizedArticleById = async (req, res) => {
     try {
-        // Find and delete the feedback
-        const feedback = await Feedback.findByIdAndDelete(id);
+        const { id } = req.params;
+        const article = await CategorizedArticle.findById(id)
+            .populate("articles")
+            .populate("background");
+        
+        if (!article) return res.status(404).json({ msg: "Categorized article not found" });
 
-        if (!feedback) {
-            return res.status(404).json({ success: false, message: "Feedback not found" });
-        }
-
-        // Remove feedback reference from the associated article
-        await Article.updateMany(
-            { feedbacks: id },
-            { $pull: { feedbacks: id } }
-        );
-
-        res.status(200).json({ success: true, message: "Feedback deleted successfully" });
+        res.json(article);
     } catch (error) {
-        console.error("Error deleting feedback:", error);
-        res.status(500).json({ success: false, message: "Failed to delete feedback", error: error.message });
+        res.status(500).json({ msg: error.message });
     }
-};
-
-module.exports = {
-    getAllArticles,
-    getArticleById,
-    addFeedbackToArticle,
-    getFeedbacksForArticle,
-    editFeedback, // Export edit feedback function
-    deleteFeedback // Export delete feedback function
 };

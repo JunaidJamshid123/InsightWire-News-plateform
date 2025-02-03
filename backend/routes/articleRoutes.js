@@ -1,31 +1,27 @@
 const express = require("express");
-const {
-    getAllArticles,
-    getArticleById,
-    addFeedbackToArticle,
-    getFeedbacksForArticle,
-    editFeedback,
-    deleteFeedback
+const { 
+    getScrapedArticles, 
+    createScrapedArticle, 
+    getCategorizedArticles, 
+    createCategorizedArticle, 
+    getCategorizedArticleById 
 } = require("../controllers/articleController");
 
 const router = express.Router();
 
-// Route to get all articles
-router.get("/", getAllArticles);
+// Get all scraped articles with feedback populated
+router.get("/scraped", getScrapedArticles);
 
-// Route to get a specific article by ID
-router.get("/:id", getArticleById);
+// Create a new scraped article
+router.post("/scraped", createScrapedArticle);
 
-// Route to get all feedbacks for a specific article
-router.get("/:id/feedbacks", getFeedbacksForArticle);
+// Get all categorized articles with associated scraped articles
+router.get("/categorized", getCategorizedArticles);
 
-// Route to add feedback to an article
-router.post("/:id/feedback", addFeedbackToArticle);
+// Create a new categorized article
+router.post("/categorized", createCategorizedArticle);
 
-// Route to edit a specific feedback by its ID
-router.put("/feedback/:feedbackId", editFeedback);
-
-// Route to delete a specific feedback by its ID
-router.delete("/feedback/:feedbackId", deleteFeedback);
+// Get a specific categorized article by ID
+router.get("/categorized/:id", getCategorizedArticleById);
 
 module.exports = router;

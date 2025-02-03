@@ -1,111 +1,94 @@
 const Feedback = require("../models/Feedback");
-const User = require("../models/User"); // Assuming a User model exists
+const ScrapedArticle = require("../models/ScrapedArticle");
+const CategorizedArticle = require("../models/CategorizedArticle");
 
-// Create new feedback
-const createFeedback = async (req, res) => {
+// Add feedback to a scraped or categorized article
+exports.addFeedback = async (req, res) => {
     try {
-        const { text, rating, isPublic } = req.body;
+        const { text, rating, articleId, type } = req.body; // type: "scraped" or "categorized"
 
-        // Ensure the user exists
-        const user = await User.findById(req.user.id); // Assuming req.user.id contains authenticated user ID
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
+        if (!text || !rating || !articleId || !type) {
+            return res.status(400).json({ msg: "Missing required fields" });
         }
 
-        // Create feedback
-        const feedback = new Feedback({
-            text,
-            user: req.user.id,
-            rating,
-            isPublic,
-        });
-
+        const feedback = new Feedback({ text, rating, user: req.user._id });
         await feedback.save();
-        res.status(201).json({ message: "Feedback created successfully", feedback });
-    } catch (error) {
-        console.error("Create Feedback Error:", error.message);
-        res.status(500).json({ message: "Server error" });
-    }
-};
 
-// Get all feedbacks
-const getAllFeedbacks = async (req, res) => {
-    try {
-        const feedbacks = await Feedback.find().populate("user", "username email");
-        res.status(200).json(feedbacks);
-    } catch (error) {
-        console.error("Get All Feedbacks Error:", error.message);
-        res.status(500).json({ message: "Server error" });
-    }
-};
-
-// Get feedback by ID
-const getFeedbackById = async (req, res) => {
-    try {
-        const feedback = await Feedback.findById(req.params.id).populate("user", "username email");
-        if (!feedback) {
-            return res.status(404).json({ message: "Feedback not found" });
+        if (type === "scraped") {
+            await ScrapedArticle.findByIdAndUpdate(articleId, { $push: { feedback: feedback._id } });
+        } else if (type === "categorized") {
+            await CategorizedArticle.findByIdAndUpdate(articleId, { $push: { feedback: feedback._id } });
+        } else {
+            return res.status(400).json({ msg: "Invalid article type" });
         }
-        res.status(200).json(feedback);
+
+        res.status(201).json({ msg: "Feedback added successfully", feedback });
     } catch (error) {
-        console.error("Get Feedback By ID Error:", error.message);
-        res.status(500).json({ message: "Server error" });
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+// Get all feedback for a specific article
+exports.getFeedbackByArticle = async (req, res) => {
+    try {
+        const { articleId, type } = req.params; // type: "scraped" or "categorized"
+
+        let feedback;
+        if (type === "scraped") {
+            feedback = await ScrapedArticle.findById(articleId).populate("feedback");
+        } else if (type === "categorized") {
+            feedback = await CategorizedArticle.findById(articleId).populate("feedback");
+        } else {
+            return res.status(400).json({ msg: "Invalid article type" });
+        }
+
+        if (!feedback) return res.status(404).json({ msg: "Article not found" });
+
+        res.json(feedback.feedback);
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
     }
 };
 
 // Update feedback
-const updateFeedback = async (req, res) => {
+exports.updateFeedback = async (req, res) => {
     try {
-        const { text, rating, isPublic } = req.body;
-        const feedback = await Feedback.findById(req.params.id);
+        const { feedbackId } = req.params;
+        const { text, rating } = req.body;
 
-        if (!feedback) {
-            return res.status(404).json({ message: "Feedback not found" });
+        const feedback = await Feedback.findById(feedbackId);
+        if (!feedback) return res.status(404).json({ msg: "Feedback not found" });
+
+        if (feedback.user.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ msg: "Unauthorized to update this feedback" });
         }
 
-        // Check if the feedback belongs to the authenticated user
-        if (feedback.user.toString() !== req.user.id) {
-            return res.status(403).json({ message: "You can only update your own feedback" });
-        }
-
-        // Update feedback
         feedback.text = text || feedback.text;
         feedback.rating = rating || feedback.rating;
-        feedback.isPublic = isPublic !== undefined ? isPublic : feedback.isPublic;
-
         await feedback.save();
-        res.status(200).json({ message: "Feedback updated successfully", feedback });
+
+        res.json({ msg: "Feedback updated successfully", feedback });
     } catch (error) {
-        console.error("Update Feedback Error:", error.message);
-        res.status(500).json({ message: "Server error" });
+        res.status(500).json({ msg: error.message });
     }
 };
 
 // Delete feedback
-const deleteFeedback = async (req, res) => {
+exports.deleteFeedback = async (req, res) => {
     try {
-        const feedback = await Feedback.findById(req.params.id);
-        if (!feedback) {
-            return res.status(404).json({ message: "Feedback not found" });
+        const { feedbackId } = req.params;
+
+        const feedback = await Feedback.findById(feedbackId);
+        if (!feedback) return res.status(404).json({ msg: "Feedback not found" });
+
+        if (feedback.user.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ msg: "Unauthorized to delete this feedback" });
         }
 
-        // Check if the feedback belongs to the authenticated user
-        if (feedback.user.toString() !== req.user.id) {
-            return res.status(403).json({ message: "You can only delete your own feedback" });
-        }
+        await Feedback.findByIdAndDelete(feedbackId);
 
-        await feedback.deleteOne();
-        res.status(200).json({ message: "Feedback deleted successfully" });
+        res.json({ msg: "Feedback deleted successfully" });
     } catch (error) {
-        console.error("Delete Feedback Error:", error.message);
-        res.status(500).json({ message: "Server error" });
+        res.status(500).json({ msg: error.message });
     }
-};
-
-module.exports = {
-    createFeedback,
-    getAllFeedbacks,
-    getFeedbackById,
-    updateFeedback,
-    deleteFeedback,
 };
