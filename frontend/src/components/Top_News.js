@@ -1,6 +1,6 @@
-'use client'
+"use client"
 
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import "./TopNews.css"
 
 const TopNews = () => {
@@ -12,16 +12,20 @@ const TopNews = () => {
 
   return (
     <div
-      className={`top-news-container ${isVisible ? 'visible' : ''}`}
+      className={`top-news-container ${isVisible ? "visible" : ""}`}
       style={{
-        backgroundImage: "url('/headlineImage.jpg')", // Replace with your image path
+        backgroundImage:
+          "url('/headlineImage.jpg')",
       }}
     >
       <div className="content">
-        <span className="label">Read More</span>
-        <h1 className="heading">
-          Iran Poised To Strike Israel Amid Rising Tensions
-        </h1>
+        <h1 className="heading">Iran Poised To Strike Israel Amid Rising Tensions</h1>
+        <div className="meta">
+          <span>International</span>
+          <span className="separator">•</span>
+          <span>Updated 2 hours ago</span>
+        </div>
+        <button className="read-more-btn">Read Full Story</button>
       </div>
     </div>
   )
