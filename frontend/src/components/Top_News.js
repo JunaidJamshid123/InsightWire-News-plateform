@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import "./TopNews.css"
+import "./Top_News.css"
 
 const TopNews = () => {
   const [isVisible, setIsVisible] = useState(false)
@@ -32,4 +32,3 @@ const TopNews = () => {
 }
 
 export default TopNews
-

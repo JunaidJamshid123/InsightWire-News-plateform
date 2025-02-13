@@ -1,0 +1,111 @@
+.news-card {
+    position: relative;
+    width: 100%;
+    background: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    min-height: 300px;
+    /* Reduced from previous height */
+}
+
+.news-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.news-image-container {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    /* 16:9 Aspect Ratio - reduced height */
+}
+
+.news-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.news-card:hover .news-image {
+    transform: scale(1.05);
+}
+
+.news-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    /* Reduced padding */
+    background: #ffffff;
+}
+
+.news-metadata {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+    /* Reduced margin */
+    color: #6b7280;
+    font-size: 0.75rem;
+    /* Slightly smaller font */
+}
+
+.metadata-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.news-title {
+    font-size: 1.1rem;
+    /* Slightly smaller font */
+    font-weight: 700;
+    line-height: 1.4;
+    color: #111827;
+    margin-bottom: 0.5rem;
+    /* Reduced margin */
+}
+
+.news-excerpt {
+    color: #4b5563;
+    font-size: 0.813rem;
+    /* Adjusted font size */
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    /* Reduced margin */
+    flex-grow: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    /* Limit to 3 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.read-more {
+    margin-top: auto;
+    text-align: right;
+}
+
+.read-more-link {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.75rem;
+    /* Smaller font size */
+    font-weight: 600;
+    color: #2563eb;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    padding: 0.25rem 0;
+}
+
+.read-more-link:hover {
+    color: #1d4ed8;
+}
