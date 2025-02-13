@@ -3,12 +3,17 @@
 import React, { useState } from 'react';
 import './Navbar.css';
 import Logo from './Images/news_logo.png'
+import Login from './login/Login';
 import { Bell, User, LogIn, UserPlus, Menu, Search, X } from 'lucide-react';
 
 const Navbar = ({ onNavClick }) => {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const navLinks = ['News', 'Blog', 'Topics', 'Media Bias', 'Misinformation'];
+   const [isLoginOpen, setIsLoginOpen] = useState(false)
+
+  const openLogin = () => setIsLoginOpen(true)
+  const closeLogin = () => setIsLoginOpen(false)
 
   const handleMobileNavClick = () => {
     setMobileNavOpen(!mobileNavOpen);
@@ -72,18 +77,14 @@ const Navbar = ({ onNavClick }) => {
       <div className={`menu-dropdown ${menuOpen ? 'open' : ''}`}>
         <div className="menu-content">
           <div className="menu-header">
-            <div className="notification-item">
-              <Bell size={18} />
-              <span className="notification-badge">3</span>
-              <span>Notifications</span>
-            </div>
-          </div>
-          <div className="menu-actions">
             <button className="menu-action-btn">
               <User size={18} />
               <span>Profile</span>
             </button>
-            <button className="menu-action-btn login-btn">
+          </div>
+          <div className="menu-actions">
+           
+            <button onClick={openLogin} className="menu-action-btn login-btn">
               <LogIn size={18} />
               <span>Login</span>
             </button>
@@ -132,6 +133,8 @@ const Navbar = ({ onNavClick }) => {
           }}
         />
       )}
+      <Login isOpen={isLoginOpen} onClose={closeLogin} />
+
     </nav>
   );
 };
