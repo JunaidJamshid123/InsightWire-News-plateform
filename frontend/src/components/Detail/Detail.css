@@ -1,134 +1,152 @@
-.details-container {
-    padding: 20px;
-    max-width: 800px;
+.news-details-wrapper {
+    position: relative;
+    min-height: 100vh;
+}
+
+.news-details {
+    padding: 40px 0;
+    background-color: #f8f9fa;
+    min-height: calc(100vh - 60px);
+}
+
+.container {
+    max-width: 1200px;
     margin: 0 auto;
-    font-family: Arial, sans-serif;
-    background-color: #ffffff;
-    /* #ffffff #f8f8eb*/
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.article-header {
-    margin-bottom: 10px;
-    font-size: 14px;
-    color: #555;
-}
-
-.article-source {
-    font-weight: bold;
-    margin-right: 5px;
-}
-
-.article-date {
-    color: gray;
+    padding: 0 20px;
+    /* Add padding-bottom to prevent chatbot overlap */
+    padding-bottom: 100px;
 }
 
 .article-title {
-    font-size: 28px;
-    font-weight: bold;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1a1a1a;
     margin-bottom: 20px;
-    color: #333;
+    line-height: 1.2;
 }
 
-/* Added Title Image */
-.article-title-image {
-    width: 100%;
-    /* Full width */
-    height: 350px;
-    /* Set height */
-    object-fit: cover;
-    /* Ensure the image covers the container while keeping the aspect ratio */
-    border-radius: 10px;
-    margin-bottom: 20px;
-}
-
-.article-detail {
-    line-height: 1.6;
-    margin-bottom: 30px;
-    font-size: 16px;
-}
-
-.bias-visualization {
-    margin: 20px 0;
-}
-
-.bias-label {
-    font-size: 18px;
-    margin-bottom: 10px;
-}
-
-.bias-bar-container {
+.article-meta {
     display: flex;
-    width: 100%;
-    height: 30px;
-    border-radius: 5px;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-bottom: 30px;
+    color: #666;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+}
+
+.meta-item svg {
+    color: #ff4444;
+}
+
+.article-image {
+    width: 70%;
+    margin-bottom: 30px;
+    border-radius: 8px;
     overflow: hidden;
-    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.bias-bar-left {
-    background-color: #b22222;
+.article-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+}
+
+.article-content {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #333;
+    margin-bottom: 40px;
+}
+
+.article-content p {
+    margin-bottom: 20px;
+}
+
+.article-footer {
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.category-tag {
+    display: inline-block;
+    padding: 6px 16px;
+    background-color: #ff4444;
     color: white;
-    text-align: center;
-    line-height: 30px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
 }
 
-.bias-bar-center {
-    background-color: #228b22;
-    color: white;
-    text-align: center;
-    line-height: 30px;
+/* Update chatbot styles to ensure proper layering */
+.chatbot-window {
+    z-index: 1001;
+    /* Ensure chatbot window is above other content */
 }
 
-.bias-bar-right {
-    background-color: #1e90ff;
-    color: white;
-    text-align: center;
-    line-height: 30px;
+.chatbot-icon {
+    z-index: 1001;
+    /* Ensure chatbot icon is above other content */
 }
 
-.additional-section {
-    margin-top: 40px;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+/* Responsive Design */
+@media (max-width: 768px) {
+    .news-details {
+        padding: 20px 0;
+    }
+
+    .article-title {
+        font-size: 1.8rem;
+    }
+
+    .article-meta {
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    .meta-item {
+        font-size: 0.85rem;
+    }
+
+    .article-content {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    /* Adjust chatbot position for mobile */
+    .chatbot-window {
+        width: 300px;
+        right: 20px;
+        bottom: 90px;
+    }
+
+    .chatbot-icon {
+        right: 20px;
+        bottom: 20px;
+    }
 }
 
-.additional-section h2 {
-    font-size: 22px;
-    margin-bottom: 15px;
-}
+@media (max-width: 480px) {
+    .article-title {
+        font-size: 1.5rem;
+    }
 
-.additional-section p {
-    font-size: 16px;
-    color: #444;
-    line-height: 1.6;
-}
+    .article-meta {
+        flex-direction: column;
+        gap: 12px;
+    }
 
-.favorite-button {
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 20px;
-    transition: background-color 0.3s ease;
-}
-
-.favorite-button:hover {
-    background-color: #45a049;
-}
-
-.favorite-button.favorited {
-    background-color: #ff6347;
-    /* Red color for favorited articles */
-}
-
-.favorite-button.favorited:hover {
-    background-color: #e55347;
-    /* Darker red for hover */
+    /* Further adjust chatbot for smaller screens */
+    .chatbot-window {
+        width: calc(100% - 40px);
+        right: 20px;
+        bottom: 80px;
+    }
 }

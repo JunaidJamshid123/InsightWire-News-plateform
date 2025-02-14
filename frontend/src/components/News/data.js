@@ -3,7 +3,7 @@ export const newsData = [
     id: 1,
     title: "EX-SENATOR URGES NEW YORK DEMS",
     content:
-      "Lorem ipsum dolor sit amet consectuier adipiscing elit sedet diames nonumiere nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisine",
+      "Life in a bustling city is a dynamic blend of chaos and opportunity, where the streets hum with the constant motion of people chasing their dreams. The towering skyscrapers stand as silent witnesses to countless stories—of ambition, struggle, and triumph. At dawn, the city awakens with the honking of cars, the chatter of pedestrians, and the aroma of freshly brewed coffee wafting from small cafés tucked into busy corners. Every individual moves with purpose, their faces reflecting a mix of determination and fatigue. Amidst the hurried pace, there are moments of serenity—a street musician playing a soulful tune, a child laughing in a park, or the golden hues of the sunset reflecting off glass buildings. Despite its challenges, the city remains a beacon of hope, where every new day brings endless possibilities, and where even the smallest dreams have a chance to grow into something extraordinary.",
     publicationDate: "26-APR-2022",
     author: "SUPER USER",
     imageUrl: "https://www.thenews.com.pk/assets/uploads/updates/2025-02-12/1281983_3207700_Untitled-17_updates.jpg",
@@ -15,7 +15,7 @@ export const newsData = [
     id: 2,
     title: "GLOBAL MARKETS SHOW SIGNS OF RECOVERY",
     content:
-      "Stock markets rebound as investors regain confidence following economic policy announcements.",
+      "Life in a bustling city is a dynamic blend of chaos and opportunity, where the streets hum with the constant motion of people chasing their dreams. The towering skyscrapers stand as silent witnesses to countless stories—of ambition, struggle, and triumph. At dawn, the city awakens with the honking of cars, the chatter of pedestrians, and the aroma of freshly brewed coffee wafting from small cafés tucked into busy corners. Every individual moves with purpose, their faces reflecting a mix of determination and fatigue. Amidst the hurried pace, there are moments of serenity—a street musician playing a soulful tune, a child laughing in a park, or the golden hues of the sunset reflecting off glass buildings. Despite its challenges, the city remains a beacon of hope, where every new day brings endless possibilities, and where even the smallest dreams have a chance to grow into something extraordinary.",
     publicationDate: "12-FEB-2025",
     author: "ECONOMY WATCH",
     imageUrl: "https://www.thenews.com.pk/assets/uploads/updates/2025-02-13/1282427_5286772_IK-COAS_updates.jpg",

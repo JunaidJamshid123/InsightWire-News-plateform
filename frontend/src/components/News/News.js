@@ -1,11 +1,12 @@
-import "./News.css"
 import { CalendarDays, User } from "lucide-react"
+import { Link } from "react-router-dom"
+import "./News.css"
 
 const News = ({ newsItem }) => {
-  const { title, content, publicationDate, author, imageUrl, url } = newsItem
+  const { id, title, content, publicationDate, author, imageUrl } = newsItem
 
   return (
-    <div className="news-card">
+    <article className="news-card">
       <div className="news-image-container">
         <img src={imageUrl || "/placeholder.svg"} alt={title} className="news-image" />
       </div>
@@ -26,12 +27,12 @@ const News = ({ newsItem }) => {
         <p className="news-excerpt">{content}</p>
 
         <div className="read-more">
-          <a href={url} className="read-more-link">
+          <Link to={`/news/${id}`} className="read-more-link">
             READ MORE
-          </a>
+          </Link>
         </div>
       </div>
-    </div>
+    </article>
   )
 }
 
