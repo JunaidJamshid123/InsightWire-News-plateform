@@ -15,7 +15,7 @@ const TopNews = () => {
       className={`top-news-container ${isVisible ? "visible" : ""}`}
       style={{
         backgroundImage:
-          "url('/headlineImage.jpg')",
+          "url('https://www.thenews.com.pk/assets/uploads/updates/2025-02-13/1282347_3935302_trump_updates.jpg')",
       }}
     >
       <div className="content">

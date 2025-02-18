@@ -4,16 +4,20 @@ import React, { useState } from 'react';
 import './Navbar.css';
 import Logo from './Images/news_logo.png'
 import Login from './login/Login';
+import Signup from "./signup/Signup" // Import the Signup component
 import { Bell, User, LogIn, UserPlus, Menu, Search, X } from 'lucide-react';
 
 const Navbar = ({ onNavClick }) => {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const navLinks = ['News', 'Blog', 'Topics', 'Media Bias', 'Misinformation'];
+  const navLinks = ['News', 'Personalized Feed', 'News Analytics', 'Media Bias', 'Story Comparison'];
+   const [isSignupOpen, setIsSignupOpen] = useState(false) // New state for Signup modal
    const [isLoginOpen, setIsLoginOpen] = useState(false)
 
   const openLogin = () => setIsLoginOpen(true)
   const closeLogin = () => setIsLoginOpen(false)
+  const openSignup = () => setIsSignupOpen(true) // New handler to open Signup
+  const closeSignup = () => setIsSignupOpen(false) // New handler to close Signup
 
   const handleMobileNavClick = () => {
     setMobileNavOpen(!mobileNavOpen);
@@ -88,7 +92,7 @@ const Navbar = ({ onNavClick }) => {
               <LogIn size={18} />
               <span>Login</span>
             </button>
-            <button className="menu-action-btn signup-btn">
+            <button  onClick={openSignup} className="menu-action-btn signup-btn">
               <UserPlus size={18} />
               <span>Sign Up</span>
             </button>
@@ -134,6 +138,7 @@ const Navbar = ({ onNavClick }) => {
         />
       )}
       <Login isOpen={isLoginOpen} onClose={closeLogin} />
+      <Signup isOpen={isSignupOpen} onClose={closeSignup} /> 
 
     </nav>
   );

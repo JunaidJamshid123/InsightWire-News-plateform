@@ -1,7 +1,8 @@
 import { CalendarDays, User, Globe } from "lucide-react"
 import { useParams } from "react-router-dom"
 import { newsData } from "../News/data"
-import Chatbot from "../chatbot/chatbot" // Updated import path
+import Chatbot from "../chatbot/chatbot"
+import RelatedArticles from "../Releted Articles/RelatedArticles.jsx"
 import "./Detail.css"
 
 export default function NewsDetails() {
@@ -50,6 +51,9 @@ export default function NewsDetails() {
           </div>
         </div>
       </article>
+
+      {/* Related Articles component */}
+      <RelatedArticles currentArticleId={newsItem.id} />
 
       {/* Chatbot component */}
       <Chatbot />

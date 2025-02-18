@@ -150,3 +150,22 @@
         bottom: 80px;
     }
 }
+
+
+.news-details {
+    margin-bottom: 2rem;
+    /* Add some space between the article and related articles */
+}
+
+/* If needed, adjust the styling of the related articles section */
+.related-articles {
+    background-color: #f8f8f8;
+    /* Light gray background to separate it from the main article */
+    padding: 2rem 0;
+}
+
+.related-articles .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
