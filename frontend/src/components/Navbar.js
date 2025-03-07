@@ -14,10 +14,11 @@ const Navbar = ({ onNavClick }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const navLinks = [
     { name: 'News', path: '/' },
-    { name: 'Personalized Feed', path: '/personalized-feed' },
-    { name: 'News Analytics', path: '/news-analytics' },
     { name: 'Media Bias', path: '/media-bias' },
-    { name: 'Story Comparison', path: '/story-comparison' }
+    { name: 'Story Comparison', path: '/story-comparison' },
+    { name: 'Personalized Feed', path: '/personalized-feed' },
+    { name: 'News Analytics', path: '/news-analytics' }
+    
   ];
   const [isSignupOpen, setIsSignupOpen] = useState(false)
   const [isLoginOpen, setIsLoginOpen] = useState(false)
