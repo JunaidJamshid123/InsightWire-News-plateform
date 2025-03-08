@@ -17,7 +17,7 @@ export const newsData = [
     id: 2,
     title: "GLOBAL MARKETS SHOW SIGNS OF RECOVERY",
     content:
-      "Life in a bustling city is a dynamic blend of chaos and opportunity...",
+      "Life in a bustling city is a dynamic blend of chaos and opportunity.Life in a bustling city is a dynamic blend of chaos and opportunityLife in a bustling city is a dynamic blend of chaos and opportunityLife in a bustling city is a dynamic blend of chaos and opportunityLife in a bustling city is a dynamic blend of chaos and opportunity..",
     publicationDate: "12-FEB-2025",
     author: "ECONOMY WATCH",
     imageUrl: "https://www.thenews.com.pk/assets/uploads/updates/2025-02-13/1282427_5286772_IK-COAS_updates.jpg",
