@@ -167,4 +167,82 @@ export const newsData = [
     location: "USA",
     biasType: "L", // Left
   },
+  {
+    id: "13",
+    title: "Trump considering 'large scale banking sanctions' on Russia until ceasefire reached",
+    category: "International",
+    imageUrl: "/images/ukraine-conflict.jpg", // Replace with actual image path
+    content: "U.S. President Donald Trump announced he is considering imposing large-scale banking sanctions and tariffs on Russia until a ceasefire and peace agreement with Ukraine is achieved.",
+    centerCoverage: "45%",
+    sources: "415",
+    biasType: "C", // C for center, L for left, R for right
+    publicationDate: "March 5, 2025"
+  },
+
+   {
+    id: "14",
+    title: "Trump considering 'large scale banking sanctions' on Russia until ceasefire reached",
+    category: "International",
+    imageUrl: "/images/ukraine-conflict.jpg", // Replace with actual image path
+    content: "U.S. President Donald Trump announced he is considering imposing large-scale banking sanctions and tariffs on Russia until a ceasefire and peace agreement with Ukraine is achieved.",
+    centerCoverage: "45%",
+    sources: "415",
+    biasType: "C", // C for center, L for left, R for right
+    publicationDate: "March 5, 2025"
+  },
+  {
+    id: "15",
+    title: "Federal Reserve signals potential interest rate cuts amid cooling inflation",
+    category: "Economy",
+    imageUrl: "/images/federal-reserve.jpg",
+    content: "The Federal Reserve indicated it may begin reducing interest rates in the coming months as inflation shows signs of moderating toward the central bank's 2% target.",
+    centerCoverage: "62%",
+    sources: "289",
+    biasType: "C",
+    publicationDate: "March 4, 2025"
+  },
+  {
+    id: "16",
+    title: "New climate bill sparks debate on carbon tax implementation",
+    category: "Environment",
+    imageUrl: "/images/climate-bill.jpg",
+    content: "Congressional lawmakers are divided over a new climate bill that would implement a national carbon tax, with proponents citing environmental benefits and critics warning of economic impacts.",
+    centerCoverage: "31%",
+    sources: "327",
+    biasType: "L",
+    publicationDate: "March 3, 2025"
+  },
+  {
+    id: "17",
+    title: "Tech sector facing regulatory scrutiny over AI development practices",
+    category: "Technology",
+    imageUrl: "/images/ai-regulation.jpg",
+    content: "Major technology companies are under increasing regulatory pressure as lawmakers express concerns about oversight and safety protocols in artificial intelligence development.",
+    centerCoverage: "48%",
+    sources: "356",
+    biasType: "R",
+    publicationDate: "March 2, 2025"
+  },
+  {
+    id: "18",
+    title: "New healthcare legislation aims to reduce prescription drug costs",
+    category: "Health",
+    imageUrl: "/images/healthcare.jpg",
+    content: "A bipartisan healthcare bill introduced this week would cap out-of-pocket prescription drug costs for seniors and expand coverage for preventive care services.",
+    centerCoverage: "53%",
+    sources: "298",
+    biasType: "L",
+    publicationDate: "March 1, 2025"
+  },
+  {
+    id: "19",
+    title: "Supreme Court to hear landmark case on digital privacy rights",
+    category: "Law",
+    imageUrl: "/images/supreme-court.jpg",
+    content: "The Supreme Court has agreed to hear arguments in a case that could redefine Fourth Amendment protections in the digital age and set precedents for data privacy nationwide.",
+    centerCoverage: "57%",
+    sources: "265",
+    biasType: "C",
+    publicationDate: "February 28, 2025"
+  },
 ];
