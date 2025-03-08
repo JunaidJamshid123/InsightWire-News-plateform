@@ -9,6 +9,7 @@ import PersonalizedFeed from "./components/PersonalizedFeed/PersonalizedFeed"
 import NewsAnalytics from "./components/NewsAnalytics/NewsAnalytics"
 import MediaBias from "./components/MediaBais/MediaBais"
 import StoryComparison from "./components/StroyComparision/StoryComparision"
+import BiasDetails from './components/MediaBais/BiasDetails';
 import "./App.css"
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
           
           {/* Detailed News Route */}
           <Route path="/news/:id" element={<NewsDetails />} />
+          <Route path="/bias-details/:id" element={<BiasDetails />} />
           
           {/* Personalized Feed Route */}
           <Route path="/personalized-feed" element={<PersonalizedFeed />} />

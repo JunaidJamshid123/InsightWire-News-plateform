@@ -2,18 +2,26 @@
 import React from "react";
 import { newsData } from "../News/data"; // Adjust the path as needed
 import "./MediaBais.css"; // Import the CSS file
+import { useNavigate } from 'react-router-dom';
 
 const MediaBias = () => {
+  const navigate = useNavigate();
+  
   return (
     <div className="media-bias-container">
       <div className="media-bias-header">
         <h1>Media Bias News Monitor</h1>
         <p>Analyzing media bias across different sources</p>
       </div>
-
+      
       <div className="news-grid">
         {newsData.map((article) => (
-          <div key={article.id} className="news-card">
+          <div 
+            key={article.id} 
+            className="news-card"
+            onClick={() => navigate(`/bias-details/${article.id}`)}
+            style={{ cursor: 'pointer' }}
+          >
             <div className="news-image-container">
               <img
                 src={article.imageUrl}
@@ -22,7 +30,7 @@ const MediaBias = () => {
               />
               <div className="news-category">{article.category}</div>
             </div>
-
+            
             <div className="news-content">
               <h2 className="news-title">{article.title}</h2>
               
@@ -33,7 +41,7 @@ const MediaBias = () => {
                   {article.centerCoverage || "37%"} Center coverage: {article.sources || "11"} sources
                 </span>
               </div>
-
+              
               <p className="news-excerpt">{article.content}</p>
               
               <div className="news-footer">

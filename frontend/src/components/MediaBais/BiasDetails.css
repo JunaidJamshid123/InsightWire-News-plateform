@@ -1,0 +1,348 @@
+/* src/components/BiasDetails/BiasDetails.css */
+
+.bias-details-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    color: #333;
+}
+
+.bias-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.back-button {
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.back-button:hover {
+    background-color: #e0e0e0;
+}
+
+.bias-details-category {
+    background-color: #4285f4;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.bias-details-content {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.bias-details-title {
+    font-size: 32px;
+    line-height: 1.2;
+    margin: 24px 24px 16px;
+    font-weight: 700;
+}
+
+.bias-details-meta {
+    display: flex;
+    margin: 0 24px 20px;
+    color: #666;
+    font-size: 14px;
+}
+
+.bias-details-date {
+    margin-right: 20px;
+}
+
+.bias-details-image-container {
+    width: 100%;
+    height: 400px;
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.bias-details-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Bias Analysis Section */
+.bias-analysis-section,
+.source-analysis-section,
+.related-articles {
+    padding: 24px;
+    border-bottom: 1px solid #eee;
+}
+
+.bias-analysis-section h2,
+.source-analysis-section h2,
+.related-articles h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.bias-details-indicator {
+    margin-bottom: 30px;
+}
+
+.bias-details-spectrum {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.bias-details-bar {
+    flex-grow: 1;
+    height: 20px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    margin: 0 10px;
+    position: relative;
+}
+
+.bias-marker {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+}
+
+.bias-left-detail {
+    background-color: #3b5bdb;
+    left: 25%;
+}
+
+.bias-center-detail {
+    background-color: #4caf50;
+    left: 50%;
+}
+
+.bias-right-detail {
+    background-color: #e53935;
+    left: 75%;
+}
+
+.bias-label {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.bias-label.left {
+    color: #3b5bdb;
+}
+
+.bias-label.right {
+    color: #e53935;
+}
+
+.bias-details-score {
+    display: flex;
+    justify-content: space-between;
+}
+
+.bias-type {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.center-coverage {
+    font-size: 16px;
+    color: #4caf50;
+}
+
+.bias-details-analysis {
+    margin-top: 30px;
+}
+
+.bias-details-analysis h3 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #444;
+}
+
+.bias-details-analysis p {
+    line-height: 1.6;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.bias-indicators-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.bias-indicator-item {
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+    border-left: 4px solid #4285f4;
+    border-radius: 4px;
+}
+
+.indicator-type {
+    font-weight: bold;
+    color: #4285f4;
+}
+
+/* Source Analysis Section */
+.source-distribution {
+    margin: 20px 0 30px;
+}
+
+.source-bar {
+    display: flex;
+    height: 30px;
+    border-radius: 15px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.left-sources,
+.center-sources,
+.right-sources {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.left-sources {
+    background-color: #3b5bdb;
+}
+
+.center-sources {
+    background-color: #4caf50;
+}
+
+.right-sources {
+    background-color: #e53935;
+}
+
+.source-percentage {
+    font-size: 14px;
+}
+
+.source-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #666;
+}
+
+.methodology-note {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 30px;
+}
+
+.methodology-note h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #444;
+}
+
+.methodology-note p {
+    line-height: 1.6;
+    font-size: 14px;
+    color: #666;
+}
+
+/* Related Articles Section */
+.related-articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.related-article-card {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.related-article-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.related-article-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.related-article-card h3 {
+    font-size: 16px;
+    padding: 15px 15px 5px;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.related-article-date {
+    display: block;
+    padding: 0 15px 15px;
+    font-size: 13px;
+    color: #666;
+}
+
+/* Loading and Error States */
+.bias-details-loading,
+.bias-details-error {
+    text-align: center;
+    padding: 50px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    max-width: 600px;
+}
+
+.bias-details-error h2 {
+    color: #e53935;
+    margin-bottom: 15px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .bias-details-title {
+        font-size: 24px;
+    }
+
+    .bias-details-image-container {
+        height: 250px;
+    }
+
+    .related-articles-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .bias-details-meta {
+        flex-direction: column;
+    }
+
+    .bias-details-date {
+        margin-right: 0;
+        margin-bottom: 5px;
+    }
+}
