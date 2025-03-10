@@ -34,13 +34,7 @@ const MediaBias = () => {
             <div className="news-content">
               <h2 className="news-title">{article.title}</h2>
               
-              <div className="bias-indicator">
-                <div className={`bias-bar ${article.biasType === "L" ? "bias-left" : article.biasType === "R" ? "bias-right" : "bias-center"}`}></div>
-                <div className="bias-empty"></div>
-                <span className="bias-text">
-                  {article.centerCoverage || "37%"} Center coverage: {article.sources || "11"} sources
-                </span>
-              </div>
+            
               
               <p className="news-excerpt">{article.content}</p>
               

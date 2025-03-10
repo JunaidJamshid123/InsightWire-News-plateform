@@ -46,7 +46,7 @@ const StoryComparison = () => {
               
               <div className="comparison-footer">
                 <span className="comparison-date">{article.publicationDate}</span>
-                <a href={article.url || "#"} className="comparison-link">
+                <a href={article.url || "#"} className="comparison-link" onClick={(e) => e.stopPropagation()}>
                   Compare Narratives
                 </a>
               </div>
