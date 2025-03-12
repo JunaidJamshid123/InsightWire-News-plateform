@@ -94,7 +94,7 @@ const BiasDetails = () => {
         
         <div className="bias-meta">
           <span className="bias-date">Published on {article.publicationDate}</span>
-          <span className="bias-sources-count">{article.sources || "11"} sources analyzed</span>
+          <span className="bias-sources-count">{article.sources || "5"} sources analyzed</span>
         </div>
 
         <div className="bias-image-wrapper">
@@ -138,14 +138,14 @@ const BiasDetails = () => {
               <p>Neutral, fact-based reporting</p>
             </div>
             <div className="bias-stat-item">
-              <h3>Source Diversity</h3>
-              <div className="bias-stat-value">{article.sources || "11"}</div>
-              <p>Different sources analyzed</p>
+              <h3>Confidence Score</h3>
+              <div className="bias-stat-value">{article.confidenceScore || "85%"}</div>
+              <p>Analysis accuracy</p>
             </div>
             <div className="bias-stat-item">
-              <h3>Confidence</h3>
-              <div className="bias-stat-value">{article.confidence || "High"}</div>
-              <p>Rating reliability</p>
+              <h3>Bias Strength</h3>
+              <div className="bias-stat-value">{article.biasStrength || "Medium"}</div>
+              <p>Intensity of bias</p>
             </div>
           </div>
         </section>
@@ -167,6 +167,12 @@ const BiasDetails = () => {
                       <span className="indicator-impact">{detail.impact || "Moderate"} impact</span>
                     </div>
                     <p className="indicator-description">{detail.description}</p>
+                    {detail.example && (
+                      <div className="indicator-example">
+                        <span className="example-label">Example:</span>
+                        <q className="example-text">{detail.example}</q>
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -187,9 +193,9 @@ const BiasDetails = () => {
                 </div>
                 <div 
                   className="source-segment center-segment" 
-                  style={{width: `${article.centerCoverage || 37}%`}}
+                  style={{width: `${article.centerSources || 37}%`}}
                 >
-                  <span>{article.centerCoverage || 37}%</span>
+                  <span>{article.centerSources || 37}%</span>
                 </div>
                 <div 
                   className="source-segment right-segment" 
@@ -209,40 +215,10 @@ const BiasDetails = () => {
           <div className="methodology-box">
             <h3>Analysis Methodology</h3>
             <p>
-              Our bias analysis examines language use, source diversity, factual accuracy, 
-              and context presentation across {article.sources || "11"} different news sources 
-              covering this story. The center coverage percentage indicates how much of the 
-              reporting maintained neutral, fact-based coverage without political slant.
+              Our AI-powered bias detection system analyzes multiple factors including language patterns,
+              framing techniques, source selection, and content omissions. We examine coverage from
+              {article.sources || " 5"} different sources to provide a comprehensive political bias assessment.
             </p>
-          </div>
-        </section>
-
-        <section className="related-section">
-          <h2>Related Articles</h2>
-          <div className="related-grid">
-            {newsData
-              .filter(item => item.id !== article.id && item.category === article.category)
-              .slice(0, 3)
-              .map(relatedArticle => (
-                <div 
-                  key={relatedArticle.id} 
-                  className="related-card" 
-                  onClick={() => navigate(`/bias-details/${relatedArticle.id}`)}
-                >
-                  <div className="related-image-container">
-                    <img 
-                      src={relatedArticle.imageUrl} 
-                      alt={relatedArticle.title} 
-                    />
-                    <div className={`related-bias-tag bias-${relatedArticle.biasType?.toLowerCase()}`}>
-                      {relatedArticle.biasType === 'L' ? 'Left' : 
-                       relatedArticle.biasType === 'R' ? 'Right' : 'Center'}
-                    </div>
-                  </div>
-                  <h3>{relatedArticle.title}</h3>
-                  <span className="related-date">{relatedArticle.publicationDate}</span>
-                </div>
-              ))}
           </div>
         </section>
       </div>
