@@ -1,21 +1,19 @@
 "use client"
-
 import { useEffect, useState } from "react"
 import "./Top_News.css"
 
 const TopNews = () => {
   const [isVisible, setIsVisible] = useState(false)
-
+  
   useEffect(() => {
     setIsVisible(true)
   }, [])
-
+  
   return (
     <div
       className={`top-news-container ${isVisible ? "visible" : ""}`}
       style={{
-        backgroundImage:
-          "url('https://www.thenews.com.pk/assets/uploads/updates/2025-02-13/1282347_3935302_trump_updates.jpg')",
+        backgroundImage: "url('https://www.thenews.com.pk/assets/uploads/updates/2025-02-13/1282347_3935302_trump_updates.jpg')",
       }}
     >
       <div className="content">
