@@ -6,7 +6,7 @@ import './Navbar.css';
 import Logo from './Images/news_logo.png'
 import Login from './login/Login';
 import Signup from "./signup/Signup"
-import { Bell, User, LogIn, UserPlus, Menu, Search, X } from 'lucide-react';
+import {User, LogIn, UserPlus, Menu, Search, X } from 'lucide-react';
 
 const Navbar = ({ onNavClick }) => {
   const navigate = useNavigate();
