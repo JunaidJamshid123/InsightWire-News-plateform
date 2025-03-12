@@ -79,37 +79,38 @@ const Login = ({ isOpen, onClose }) => {
         
         <form onSubmit={handleEmailLogin}>
           <div className="form-group">
-            <label htmlFor="email">Email Address</label>
-            <input
-              type="email"
-              id="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              disabled={isLoading}
-            />
+            <div className="input-container">
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={isLoading}
+                className="form-input"
+              />
+            </div>
           </div>
           
           <div className="form-group">
-            <div className="password-group">
+            <div className="input-container">
               <label htmlFor="password">Password</label>
-              <a href="#forgot" className="forgot-password">Forgot Password?</a>
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                disabled={isLoading}
+                className="form-input"
+              />
             </div>
-            <input
-              type="password"
-              id="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              disabled={isLoading}
-            />
           </div>
           
           <button
             type="submit"
-            className="login-button"
+            className="sign-in-button"
             disabled={isLoading}
           >
             {isLoading ? 'Signing In...' : 'Sign In'}
