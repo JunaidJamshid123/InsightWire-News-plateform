@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './Navbar.css';
 import Logo from './Images/news_logo.png'
 import Login from './login/Login';
@@ -10,18 +10,25 @@ import { Bell, User, LogIn, UserPlus, Menu, Search, X } from 'lucide-react';
 
 const Navbar = ({ onNavClick }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeLink, setActiveLink] = useState('/');
   const navLinks = [
     { name: 'News', path: '/' },
     { name: 'Media Bias', path: '/media-bias' },
     { name: 'Story Comparison', path: '/story-comparison' },
     { name: 'Personalized Feed', path: '/personalized-feed' },
     { name: 'News Analytics', path: '/news-analytics' }
-    
   ];
   const [isSignupOpen, setIsSignupOpen] = useState(false)
   const [isLoginOpen, setIsLoginOpen] = useState(false)
+  const [searchFocused, setSearchFocused] = useState(false);
+
+  // Update active link based on current location
+  useEffect(() => {
+    setActiveLink(location.pathname);
+  }, [location]);
 
   const openLogin = () => setIsLoginOpen(true)
   const closeLogin = () => setIsLoginOpen(false)
@@ -40,6 +47,7 @@ const Navbar = ({ onNavClick }) => {
 
   const handleNavigation = (path, sectionId) => {
     navigate(path);
+    setActiveLink(path);
     if (onNavClick) {
       onNavClick(sectionId);
     }
@@ -67,9 +75,10 @@ const Navbar = ({ onNavClick }) => {
                       link.path, 
                       link.name.toLowerCase().replace(' ', '-')
                     )}
-                    className={link.name === 'News' ? 'active' : ''}
+                    className={activeLink === link.path ? 'active' : ''}
                   >
                     {link.name}
+                    <span className="nav-indicator"></span>
                   </Link>
                 </li>
               ))}
@@ -77,8 +86,13 @@ const Navbar = ({ onNavClick }) => {
           </div>
 
           <div className="navbar-right">
-            <div className="navbar-search">
-              <input type="text" placeholder="Balanced Search" />
+            <div className={`navbar-search ${searchFocused ? 'focused' : ''}`}>
+              <input 
+                type="text" 
+                placeholder="Balanced Search" 
+                onFocus={() => setSearchFocused(true)}
+                onBlur={() => setSearchFocused(false)}
+              />
               <button className="search-button">
                 <Search size={18} />
               </button>
@@ -91,7 +105,7 @@ const Navbar = ({ onNavClick }) => {
 
           <div className="navbar-mobile-toggle">
             <button onClick={handleMobileNavClick}>
-              <Menu size={24} />
+              {mobileNavOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
         </div>
@@ -107,7 +121,6 @@ const Navbar = ({ onNavClick }) => {
             </button>
           </div>
           <div className="menu-actions">
-           
             <button onClick={openLogin} className="menu-action-btn login-btn">
               <LogIn size={18} />
               <span>Login</span>
@@ -131,9 +144,10 @@ const Navbar = ({ onNavClick }) => {
                   link.path, 
                   link.name.toLowerCase().replace(' ', '-')
                 )}
-                className={link.name === 'News' ? 'active' : ''}
+                className={activeLink === link.path ? 'active' : ''}
               >
                 {link.name}
+                <span className="nav-indicator"></span>
               </Link>
             </li>
           ))}
