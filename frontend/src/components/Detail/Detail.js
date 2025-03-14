@@ -1,13 +1,14 @@
-import { CalendarDays, User, Globe, Tag, ArrowLeft } from "lucide-react"
-import { useParams, Link } from "react-router-dom"
-import { newsData } from "../News/data"
-import Chatbot from "../chatbot/chatbot"
-import "./Detail.css"
+import React from "react";
+import { CalendarDays, User, Globe, Tag, ArrowLeft } from "lucide-react";
+import { useParams, Link } from "react-router-dom";
+import { newsData } from "../News/data";
+import Chatbot from "../chatbot/chatbot";
+import "./Detail.css";
 
 export default function NewsDetails() {
-  const { id } = useParams()
-  const newsItem = newsData.find((item) => item.id === Number(id))
-  
+  const { id } = useParams();
+  const newsItem = newsData.find((item) => item.id === Number(id));
+
   if (!newsItem) {
     return (
       <div className="container error-container">
@@ -17,9 +18,9 @@ export default function NewsDetails() {
           <span>Back to News</span>
         </Link>
       </div>
-    )
+    );
   }
-  
+
   return (
     <>
       <article className="news-details">
@@ -81,6 +82,7 @@ export default function NewsDetails() {
             </div>
           </div>
           
+        
           {newsItem.relatedArticles && newsItem.relatedArticles.length > 0 && (
             <div className="related-articles">
               <h3>Related Articles</h3>
@@ -101,5 +103,5 @@ export default function NewsDetails() {
       
       <Chatbot />
     </>
-  )
+  );
 }

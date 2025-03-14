@@ -4,7 +4,7 @@ const CategorizedArticle = require("../models/CategorizedArticle");
 // Get all scraped articles with feedback populated
 exports.getScrapedArticles = async (req, res) => {
     try {
-        const articles = await ScrapedArticle.find().populate("feedback");
+        const articles = await ScrapedArticle.find();
         res.json(articles);
     } catch (error) {
         res.status(500).json({ msg: error.message });
@@ -37,8 +37,6 @@ exports.createScrapedArticle = async (req, res) => {
 exports.getCategorizedArticles = async (req, res) => {
     try {
         const categorizedArticles = await CategorizedArticle.find()
-            .populate("articles")
-            .populate("background");
         res.json(categorizedArticles);
     } catch (error) {
         res.status(500).json({ msg: error.message });
@@ -67,9 +65,6 @@ exports.getCategorizedArticleById = async (req, res) => {
     try {
         const { id } = req.params;
         const article = await CategorizedArticle.findById(id)
-            .populate("articles")
-            .populate("background");
-        
         if (!article) return res.status(404).json({ msg: "Categorized article not found" });
 
         res.json(article);
