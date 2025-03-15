@@ -7,19 +7,33 @@ function NewsSection() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Function to shuffle array (Fisher-Yates algorithm)
+  const shuffleArray = (array) => {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+    return newArray;
+  };
+
   useEffect(() => {
     const fetchNews = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:5000/api/articles/scraped');
-        
+        const response = await fetch("http://localhost:5000/api/articles/scraped");
+
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        
+
         const data = await response.json();
+
+        // Shuffle the data array to get random articles
+        const shuffledData = shuffleArray(data);
+
         // Limit to 25 news articles
-        const limitedData = data.slice(0, 25);
+        const limitedData = shuffledData.slice(0, 25);
         setNews(limitedData);
         setLoading(false);
       } catch (err) {
@@ -30,20 +44,30 @@ function NewsSection() {
     };
 
     fetchNews();
+
+    // Set up interval to refresh with new random articles every 5 minutes
+    const intervalId = setInterval(() => {
+      fetchNews();
+    }, 5 * 60 * 1000); // 5 minutes
+
+    // Clean up interval when component unmounts
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
     <section className="news-section">
       <div className="container mx-auto px-4">
         {/* Section Heading */}
-        <h2 className="section-heading">NEWS AT A GLANCE</h2>
-        
+        <div className="section-header">
+          <h2 className="section-heading">NEWS AT A GLANCE</h2>
+        </div>
+
         {/* Loading State */}
         {loading && <p className="text-center">Loading news...</p>}
-        
+
         {/* Error State */}
         {error && <p className="text-center text-red-500">Error: {error}</p>}
-        
+
         {/* News Grid */}
         {!loading && !error && (
           <div className="news-grid">
