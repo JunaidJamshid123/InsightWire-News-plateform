@@ -1,13 +1,25 @@
 const ScrapedArticle = require("../models/ScrapedArticle");
 const CategorizedArticle = require("../models/CategorizedArticle");
 
-// Get all scraped articles with feedback populated
+// Get all scraped articles
 exports.getScrapedArticles = async (req, res) => {
     try {
         const articles = await ScrapedArticle.find();
         res.json(articles);
     } catch (error) {
-        res.status(500).json({ msg: error.message });
+        res.status(500).json({ msg: "Server error", error: error.message });
+    }
+};
+
+// Get a specific scraped article by ID
+exports.getScrapedArticleById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const article = await ScrapedArticle.findById(id);
+        if (!article) return res.status(404).json({ msg: "Scraped article not found" });
+        res.json(article);
+    } catch (error) {
+        res.status(500).json({ msg: "Server error", error: error.message });
     }
 };
 
@@ -29,17 +41,41 @@ exports.createScrapedArticle = async (req, res) => {
         await newArticle.save();
         res.status(201).json(newArticle);
     } catch (error) {
-        res.status(500).json({ msg: error.message });
+        res.status(500).json({ msg: "Server error", error: error.message });
     }
 };
 
-// Get all categorized articles with associated scraped articles
+// Delete a scraped article
+exports.deleteScrapedArticle = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deletedArticle = await ScrapedArticle.findByIdAndDelete(id);
+        if (!deletedArticle) return res.status(404).json({ msg: "Scraped article not found" });
+        res.json({ msg: "Scraped article deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ msg: "Server error", error: error.message });
+    }
+};
+
+// Get all categorized articles
 exports.getCategorizedArticles = async (req, res) => {
     try {
-        const categorizedArticles = await CategorizedArticle.find()
+        const categorizedArticles = await CategorizedArticle.find();
         res.json(categorizedArticles);
     } catch (error) {
-        res.status(500).json({ msg: error.message });
+        res.status(500).json({ msg: "Server error", error: error.message });
+    }
+};
+
+// Get a specific categorized article by ID
+exports.getCategorizedArticleById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const article = await CategorizedArticle.findById(id);
+        if (!article) return res.status(404).json({ msg: "Categorized article not found" });
+        res.json(article);
+    } catch (error) {
+        res.status(500).json({ msg: "Server error", error: error.message });
     }
 };
 
@@ -56,19 +92,18 @@ exports.createCategorizedArticle = async (req, res) => {
         await newCategorizedArticle.save();
         res.status(201).json(newCategorizedArticle);
     } catch (error) {
-        res.status(500).json({ msg: error.message });
+        res.status(500).json({ msg: "Server error", error: error.message });
     }
 };
 
-// Get a specific categorized article by ID
-exports.getCategorizedArticleById = async (req, res) => {
+// Delete a categorized article
+exports.deleteCategorizedArticle = async (req, res) => {
     try {
         const { id } = req.params;
-        const article = await CategorizedArticle.findById(id)
-        if (!article) return res.status(404).json({ msg: "Categorized article not found" });
-
-        res.json(article);
+        const deletedArticle = await CategorizedArticle.findByIdAndDelete(id);
+        if (!deletedArticle) return res.status(404).json({ msg: "Categorized article not found" });
+        res.json({ msg: "Categorized article deleted successfully" });
     } catch (error) {
-        res.status(500).json({ msg: error.message });
+        res.status(500).json({ msg: "Server error", error: error.message });
     }
 };
