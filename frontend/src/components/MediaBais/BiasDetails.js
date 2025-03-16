@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { newsData } from '../News/data';
 import './BiasDetails.css';
 
 const BiasDetails = () => {
@@ -8,15 +7,58 @@ const BiasDetails = () => {
   const navigate = useNavigate();
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [imageUrl, setImageUrl] = useState(null);
 
   useEffect(() => {
-    // Find the article with the matching ID
-    const foundArticle = newsData.find(item => item.id === parseInt(id) || item.id === id);
-    
-    if (foundArticle) {
-      setArticle(foundArticle);
-    }
-    setLoading(false);
+    const fetchArticleData = async () => {
+      try {
+        // Fetch articles from API
+        const response = await fetch('http://localhost:5000/api/articles/scraped');
+        if (response.ok) {
+          const articlesData = await response.json();
+          // Find the article with the matching ID
+          const foundArticle = articlesData.find(item => item._id === id);
+          
+          if (foundArticle) {
+            setArticle(foundArticle);
+            
+            // Fetch the image for the article
+            if (foundArticle.url) {
+              try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                
+                const imageResponse = await fetch(
+                  `http://localhost:5000/api/extract-image?url=${encodeURIComponent(foundArticle.url)}`,
+                  { signal: controller.signal }
+                );
+                
+                clearTimeout(timeoutId);
+                
+                if (imageResponse.ok) {
+                  const imageData = await imageResponse.json();
+                  setImageUrl(imageData.imageUrl || 
+                    `https://source.unsplash.com/random/1200x600/?news,${foundArticle.publication?.replace(/\s+/g, '')}${id}`);
+                } else {
+                  setImageUrl(`https://source.unsplash.com/random/1200x600/?news,${id}`);
+                }
+              } catch (err) {
+                console.error("Error extracting image for article:", err);
+                setImageUrl(`https://source.unsplash.com/random/1200x600/?news,${id}`);
+              }
+            } else {
+              setImageUrl(`https://source.unsplash.com/random/1200x600/?news,${id}`);
+            }
+          }
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching article data:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchArticleData();
   }, [id]);
 
   const getBiasClass = () => {
@@ -99,7 +141,7 @@ const BiasDetails = () => {
 
         <div className="bias-image-wrapper">
           <img 
-            src={article.imageUrl} 
+            src={imageUrl || article.imageUrl} 
             alt={article.title} 
             className="bias-hero-image" 
           />
