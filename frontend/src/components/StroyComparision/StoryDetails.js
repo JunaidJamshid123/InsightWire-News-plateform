@@ -1,7 +1,5 @@
-// src/components/StoryDetails/StoryDetails.js
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { newsData } from "../News/data"; // Adjust path as needed
 import "./StoryDetails.css";
 
 const StoryDetails = () => {
@@ -9,69 +7,155 @@ const StoryDetails = () => {
   const navigate = useNavigate();
   const [story, setStory] = useState(null);
   const [activeTab, setActiveTab] = useState("all");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // In a real app, you would fetch the story by ID from an API
-    // For now, we'll simulate this by finding it in the newsData array
-    const foundStory = newsData.find(item => item.id === parseInt(id) || item.id === id);
+    // First, try to get the story from sessionStorage (set by StoryComparison)
+    const storedArticle = sessionStorage.getItem('selectedArticle');
     
-    if (foundStory) {
-      setStory(foundStory);
-    } else {
-      // Handle story not found
-      console.error("Story not found");
+    if (storedArticle) {
+      try {
+        const parsedArticle = JSON.parse(storedArticle);
+        
+        // Verify this is the correct article by checking ID
+        if (parsedArticle.id === id) {
+          setStory(parsedArticle);
+          setLoading(false);
+          return;
+        }
+      } catch (err) {
+        console.error("Error parsing stored article:", err);
+      }
     }
-  }, [id]);
+    
+    // If we don't have the story in storage or it's not the one we're looking for,
+    // fetch it from the API
+    const fetchStory = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch the specific article by ID
+        const response = await fetch(`http://localhost:5000/api/articles/${id}`);
+        
+        if (!response.ok) {
+          throw new Error(`API call failed with status: ${response.status}`);
+        }
+        
+        const articleData = await response.json();
+        
+        // Generate sample perspective data
+        // In a real app, this would come from your backend
+        const perspectives = {
+          left: {
+            title: articleData.title,
+            content: "This is the left-leaning perspective on the story...",
+            sources: 67,
+            keyPoints: [
+              "Emphasis on social impacts",
+              "Focus on affected communities",
+              "Concerns about long-term implications",
+              "Historical context of similar situations"
+            ]
+          },
+          center: {
+            title: articleData.title,
+            content: "This is the centrist perspective on the story...",
+            sources: 98,
+            keyPoints: [
+              "Balanced reporting of key facts",
+              "Equal coverage of multiple viewpoints",
+              "Context about broader implications",
+              "Focus on verified information"
+            ]
+          },
+          right: {
+            title: articleData.title,
+            content: "This is the right-leaning perspective on the story...",
+            sources: 51,
+            keyPoints: [
+              "Focus on economic impacts",
+              "Individual liberty considerations",
+              "Traditional values perspective",
+              "National security implications"
+            ]
+          }
+        };
+        
+        // Sample coverage data
+        const coverageData = {
+          total: 216,
+          left: 67,
+          right: 51,
+          center: 98,
+          lastUpdated: "1 hour ago",
+          biasDistribution: "45% Center"
+        };
+        
+        // Set the story with perspectives and coverage data
+        setStory({
+          ...articleData,
+          id: articleData._id || id,
+          perspectives,
+          coverageData,
+          category: articleData.category || "News",
+          publicationDate: formatDate(articleData.date)
+        });
+        
+      } catch (err) {
+        console.error("Error fetching story:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  if (!story) {
-    return <div className="loading">Loading story details...</div>;
+    fetchStory();
+  }, [id]);
+  
+  // Format date nicely
+  const formatDate = (dateString) => {
+    if (!dateString || dateString === "Loading...") {
+      return "Recently published";
+    }
+    
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return "Recently published";
+      }
+      
+      return new Intl.DateTimeFormat('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      }).format(date);
+    } catch (err) {
+      return "Recently published";
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="pulse-loader"></div>
+        <p>Loading story details...</p>
+      </div>
+    );
   }
 
-  // Sample data for different perspectives (in a real app, this would come from the API)
-  const perspectives = {
-    left: {
-      title: "Trump Threatens New Sanctions on Russia Amid Escalating Ukraine Crisis",
-      content: "President Trump has announced potential wide-ranging banking sanctions against Russia as Ukraine continues to face devastating attacks on civilian infrastructure. Critics argue this represents a significant shift in Trump's previously more conciliatory tone toward Putin, potentially indicating growing pressure from NATO allies and defense officials. Ukrainian President Zelenskyy cautiously welcomed the statement while emphasizing the immediate need for additional military support.",
-      sources: 67,
-      keyPoints: [
-        "Emphasis on Russian aggression against civilian targets",
-        "Focus on humanitarian impact of the conflict",
-        "Questions about Trump's previous stance on Russia",
-        "Concerns about enforcement of potential sanctions"
-      ]
-    },
-    center: {
-      title: "Trump Considers Banking Sanctions Against Russia Until Ukraine Ceasefire Reached",
-      content: "U.S. President Donald Trump announced he is weighing significant banking sanctions and tariffs on Russia until a ceasefire with Ukraine is achieved. The statement follows intensified Russian attacks on Ukrainian infrastructure. Russian President Putin has rejected making concessions, while Ukrainian President Zelenskyy expressed willingness to work with Trump toward peace despite strained relations.",
-      sources: 98,
-      keyPoints: [
-        "Balanced reporting of Trump's announcement",
-        "Equal coverage of all parties' positions",
-        "Context about current battlefield situation",
-        "Focus on diplomatic implications"
-      ]
-    },
-    right: {
-      title: "Trump Takes Strong Stance on Russia, Promises 'Large Scale' Sanctions to End Ukraine War",
-      content: "President Trump demonstrated decisive leadership by announcing potential significant banking sanctions against Russia until a peace agreement is reached with Ukraine. This tough stance aims to bring Putin to the negotiating table while supporting Ukraine's sovereignty. President Zelenskyy acknowledged Trump's 'strong leadership' as crucial for achieving lasting peace in the region.",
-      sources: 51,
-      keyPoints: [
-        "Emphasis on Trump's strong leadership",
-        "Focus on the peace objective of the sanctions",
-        "Highlighting Zelenskyy's positive response",
-        "Support for sovereignty and national security"
-      ]
-    }
-  };
+  if (error || !story) {
+    return (<div className="error-container">
+        <div className="error-icon">!</div>
+        <h2>Oops! We couldn't find that story</h2>
+        <p>{error || "The requested story could not be found"}</p>
+        <button onClick={() => navigate("/")}>Back to All Stories</button>
+      </div>
+    );
+  }
 
-  const coverageData = {
-    total: 415,
-    left: 67,
-    right: 51,
-    center: 98,
-    lastUpdated: "1 hour ago",
-    biasDistribution: "45% Center"
-  };
+  // Extract perspectives and coverage data from the story
+  const { perspectives, coverageData } = story;
 
   return (
     <div className="story-details-container">
@@ -262,28 +346,28 @@ const StoryDetails = () => {
                 </thead>
                 <tbody>
                   <tr>
-                    <td>Trump's Stance</td>
-                    <td>Shift from previous Russia-friendly position</td>
-                    <td>Diplomatic response to current situation</td>
-                    <td>Strong, decisive leadership</td>
+                    <td>Primary Focus</td>
+                    <td>Social impact and affected communities</td>
+                    <td>Balanced reporting of verified facts</td>
+                    <td>Economic implications and traditional values</td>
                   </tr>
                   <tr>
-                    <td>Motivation</td>
-                    <td>Pressure from allies and officials</td>
-                    <td>Response to escalating conflict</td>
-                    <td>Commitment to peace and sovereignty</td>
+                    <td>Framing</td>
+                    <td>Systemic and historical context</td>
+                    <td>Multiple perspectives presented equally</td>
+                    <td>Individual responsibility and security</td>
                   </tr>
                   <tr>
-                    <td>Ukraine's Position</td>
-                    <td>Desperate for more immediate support</td>
-                    <td>Working toward diplomatic solution</td>
-                    <td>Grateful for strong U.S. leadership</td>
+                    <td>Solutions Emphasized</td>
+                    <td>Collective action and policy change</td>
+                    <td>Evidence-based approaches from various viewpoints</td>
+                    <td>Market-based solutions and traditional institutions</td>
                   </tr>
                   <tr>
-                    <td>Russia's Actions</td>
-                    <td>Aggressive attacks on civilians</td>
-                    <td>Military operations affecting infrastructure</td>
-                    <td>Unwillingness to negotiate</td>
+                    <td>Key Concerns</td>
+                    <td>Equality and social justice</td>
+                    <td>Accuracy and comprehensive context</td>
+                    <td>Freedom, security, and economic impact</td>
                   </tr>
                 </tbody>
               </table>
