@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import "./Top_News.css"
 
@@ -13,6 +13,26 @@ const TopNews = () => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [sliding, setSliding] = useState(false)
   const [slideDirection, setSlideDirection] = useState("")
+  const [touchStart, setTouchStart] = useState(null)
+  const [touchEnd, setTouchEnd] = useState(null)
+  
+  // For preloading images
+  const imageRefs = useRef([])
+  const autoSlideTimerRef = useRef(null)
+  const slideshowRef = useRef(null)
+
+  // Reset the auto-slide timer when user interaction occurs
+  const resetAutoSlideTimer = () => {
+    if (autoSlideTimerRef.current) {
+      clearInterval(autoSlideTimerRef.current)
+    }
+    
+    autoSlideTimerRef.current = setInterval(() => {
+      if (articles.length > 1) {
+        handleNext()
+      }
+    }, 7000)
+  }
 
   useEffect(() => {
     setIsVisible(true)
@@ -59,6 +79,13 @@ const TopNews = () => {
 
           const resolvedImages = await Promise.all(imagePromises)
           setImageUrls(resolvedImages)
+          
+          // Preload images
+          resolvedImages.forEach((url, index) => {
+            const img = new Image()
+            img.src = url
+            imageRefs.current[index] = img
+          })
         }
 
         setLoading(false)
@@ -71,16 +98,16 @@ const TopNews = () => {
 
     fetchTopNews()
 
-    // Auto-slide every 7 seconds
-    const autoSlideInterval = setInterval(() => {
-      if (articles.length > 1) {
-        // Only auto-slide if we have more than one article
-        handleNext()
-      }
-    }, 7000)
+    // Initialize auto-slide
+    resetAutoSlideTimer()
 
-    return () => clearInterval(autoSlideInterval)
-  }, [articles.length]) // Added articles.length as dependency
+    // Cleanup
+    return () => {
+      if (autoSlideTimerRef.current) {
+        clearInterval(autoSlideTimerRef.current)
+      }
+    }
+  }, []) // Only run on mount
 
   // Format the time difference
   const getTimeAgo = (dateStr) => {
@@ -130,6 +157,8 @@ const TopNews = () => {
       setCurrentIndex((prevIndex) => (prevIndex === 0 ? articles.length - 1 : prevIndex - 1))
       setSliding(false)
     }, 500)
+    
+    resetAutoSlideTimer()
   }
 
   const handleNext = () => {
@@ -141,6 +170,51 @@ const TopNews = () => {
       setCurrentIndex((prevIndex) => (prevIndex === articles.length - 1 ? 0 : prevIndex + 1))
       setSliding(false)
     }, 500)
+    
+    resetAutoSlideTimer()
+  }
+  
+  // Handle touch events for mobile swipe functionality
+  const handleTouchStart = (e) => {
+    setTouchStart(e.targetTouches[0].clientX)
+  }
+  
+  const handleTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX)
+  }
+  
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return
+    
+    const distance = touchStart - touchEnd
+    const isLeftSwipe = distance > 50
+    const isRightSwipe = distance < -50
+    
+    if (isLeftSwipe) {
+      handleNext()
+    }
+    
+    if (isRightSwipe) {
+      handlePrev()
+    }
+    
+    setTouchStart(null)
+    setTouchEnd(null)
+  }
+  
+  // Handle direct navigation to a specific slide
+  const handleDotClick = (index) => {
+    if (sliding || index === currentIndex) return
+    
+    setSliding(true)
+    setSlideDirection(index > currentIndex ? "left-to-right" : "right-to-left")
+    
+    setTimeout(() => {
+      setCurrentIndex(index)
+      setSliding(false)
+    }, 500)
+    
+    resetAutoSlideTimer()
   }
 
   if (loading) {
@@ -166,7 +240,13 @@ const TopNews = () => {
   }
 
   return (
-    <div className="slideshow-container">
+    <div 
+      className="slideshow-container" 
+      ref={slideshowRef}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       <div
         className={`top-news-container ${isVisible ? "visible" : ""} ${sliding ? `sliding ${slideDirection}` : ""}`}
         style={{
@@ -188,10 +268,10 @@ const TopNews = () => {
 
       {articles.length > 1 && (
         <>
-          <button className="nav-btn prev-btn" onClick={handlePrev}>
+          <button className="nav-btn prev-btn" onClick={handlePrev} aria-label="Previous slide">
             <ChevronLeft size={24} />
           </button>
-          <button className="nav-btn next-btn" onClick={handleNext}>
+          <button className="nav-btn next-btn" onClick={handleNext} aria-label="Next slide">
             <ChevronRight size={24} />
           </button>
 
@@ -200,7 +280,9 @@ const TopNews = () => {
               <span
                 key={index}
                 className={`indicator ${index === safeIndex ? "active" : ""}`}
-                onClick={() => setCurrentIndex(index)}
+                onClick={() => handleDotClick(index)}
+                aria-label={`Go to slide ${index + 1}`}
+                role="button"
               />
             ))}
           </div>
@@ -211,4 +293,3 @@ const TopNews = () => {
 }
 
 export default TopNews
-
