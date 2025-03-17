@@ -217,7 +217,8 @@
 }
 
 .news-content {
-    padding: 24px;
+    padding: 16px 24px 24px;
+    /* Reduced top padding */
     display: flex;
     flex-direction: column;
     flex-grow: 1;
@@ -229,7 +230,8 @@
     border-radius: 20px;
     font-size: 12px;
     font-weight: 600;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
+    /* Reduced from 12px */
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
