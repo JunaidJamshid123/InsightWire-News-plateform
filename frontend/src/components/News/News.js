@@ -10,13 +10,17 @@ const News = ({ newsItem }) => {
   const [isLoading, setIsLoading] = useState(true);
   
   // Get the first paragraph of content for the excerpt
-  const excerpt = content && content.length > 0 ? content[0] : "";
-  
+  // Add fallback text if content is empty
+  const excerpt = content && content.length > 0 
+    ? content[0] 
+    : "Read the full article for more information.";
+    
   useEffect(() => {
     // Function to extract image from URL
     const extractImageFromUrl = async () => {
       if (!url) {
         setIsLoading(false);
+        generateTitleImage(); // Always generate a placeholder if no URL
         return;
       }
       
@@ -27,28 +31,39 @@ const News = ({ newsItem }) => {
         if (response.ok) {
           const data = await response.json();
           if (data.imageUrl) {
-            setImageUrl(data.imageUrl);
+            // Test image loading before setting
+            const img = new Image();
+            img.onload = () => {
+              setImageUrl(data.imageUrl);
+              setIsLoading(false);
+            };
+            img.onerror = () => {
+              generateTitleImage();
+              setIsLoading(false);
+            };
+            img.src = data.imageUrl;
           } else {
-            // Fallback to generating a title-based image
             generateTitleImage();
+            setIsLoading(false);
           }
         } else {
-          // If there's an error, generate a title-based image
           generateTitleImage();
+          setIsLoading(false);
         }
       } catch (error) {
         console.error("Error extracting image:", error);
-        // Fallback to generating a title-based image
         generateTitleImage();
-      } finally {
         setIsLoading(false);
       }
     };
     
     // Function to generate image based on title (as fallback)
     const generateTitleImage = () => {
-      if (!title) return;
-
+      if (!title) {
+        setImageUrl("/placeholder.svg");
+        return;
+      }
+      
       // Create a canvas element
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
@@ -57,8 +72,11 @@ const News = ({ newsItem }) => {
       canvas.width = 400;
       canvas.height = 300;
       
-      // Fill background with red (matching your screenshot)
-      ctx.fillStyle = '#FF0000';
+      // Fill background with a gradient (more visually appealing)
+      const gradient = ctx.createLinearGradient(0, 0, 400, 300);
+      gradient.addColorStop(0, '#e53e3e');
+      gradient.addColorStop(1, '#c53030');
+      ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
       // Add text (first letter of title)
@@ -85,40 +103,45 @@ const News = ({ newsItem }) => {
     <article className="news-card">
       <div className="news-image-container">
         {isLoading ? (
-          <div className="loading-image">Loading...</div>
+          <div className="loading-image">
+            <div className="loading-spinner"></div>
+          </div>
         ) : (
           <img 
-            src={imageUrl} 
-            alt={title} 
+            src={imageUrl}
+            alt={title || "News image"}
             className="news-image"
-            onError={() => setImageUrl("/placeholder.svg")} 
+            onError={() => setImageUrl("/placeholder.svg")}
           />
         )}
       </div>
-
+      
       <div className="news-content">
-        <div className="news-metadata">
-          <div className="metadata-item">
-            <CalendarDays size={16} />
-            <span>{formattedDate}</span>
-          </div>
-          <div className="metadata-item">
-            <User size={16} />
-            <span>BY {publication || "Unknown"}</span>
-          </div>
-        </div>
-
-        <h2 className="news-title">{title}</h2>
+        <h2 className="news-title">{title || "Breaking News"}</h2>
+        
         <p className="news-excerpt">{excerpt}</p>
-
-        <div className="read-more">
-          <Link to={`/news/${_id}`} className="read-more-link">
-            READ MORE
-          </Link>
+        
+        <div className="news-footer">
+          <div className="news-metadata">
+            <div className="metadata-item">
+              <CalendarDays size={16} />
+              <span>{formattedDate}</span>
+            </div>
+            <div className="metadata-item">
+              <User size={16} />
+              <span>BY {publication || "Unknown"}</span>
+            </div>
+          </div>
+          
+          <div className="read-more">
+            <Link to={`/news/${_id}`} className="read-more-link">
+              READ MORE
+            </Link>
+          </div>
         </div>
       </div>
     </article>
   );
-}
+};
 
 export default News;
