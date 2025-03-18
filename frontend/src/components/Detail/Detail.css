@@ -90,6 +90,7 @@
     display: block;
     transition: transform 0.3s ease;
 }
+/* Add to your Detail.css file */
 
 .article-content {
     font-size: 1.1rem;
@@ -100,15 +101,39 @@
 
 .article-content p {
     margin-bottom: 1.5rem;
+    text-align: justify;
+    text-justify: inter-word;
 }
 
+/* Remove the first letter styling temporarily until content is fixed */
 .article-content p:first-of-type::first-letter {
+    font-size: inherit;
+    font-weight: inherit;
+    float: none;
+    line-height: inherit;
+    padding-right: 0;
+    color: inherit;
+}
+
+/* Add back the first letter styling once content is fixed */
+.article-content.content-fixed p:first-of-type::first-letter {
     font-size: 3rem;
     font-weight: 700;
     float: left;
     line-height: 0.9;
     padding-right: 0.5rem;
     color: #1e40af;
+}
+
+/* Single character handling */
+.article-content p.content-paragraph:empty,
+.article-content p.content-paragraph:only-of-type {
+    min-height: 1.5em;
+}
+
+/* Empty paragraph handling */
+.article-content p:empty {
+    display: none;
 }
 
 .article-footer {

@@ -24,6 +24,28 @@ export default function NewsDetails() {
         }
         
         const data = await response.json();
+
+        // Preprocess the content to handle fragments
+      if (data.content) {
+        // If content is an array with single characters or very short fragments
+        if (Array.isArray(data.content)) {
+          const hasFragments = data.content.some(item => 
+            item && typeof item === 'string' && item.trim().length <= 3
+          );
+          
+          if (hasFragments) {
+            // Join all fragments and then re-split into proper paragraphs
+            const combinedText = data.content.filter(item => item).join(' ');
+            data.content = combinedText
+              .split(/(?:\.|\?|!)\s+(?=[A-Z])/)
+              .filter(p => p && p.trim().length > 0)
+              .map(p => p.trim() + (p.endsWith('.') || p.endsWith('?') || p.endsWith('!') ? '' : '.'));
+          }
+        }
+      }
+      
+     
+
         setNewsItem(data);
         
         // Handle image extraction if needed
@@ -132,21 +154,87 @@ export default function NewsDetails() {
     );
   }
 
-  // Process content to handle different content formats
-  const renderContent = () => {
-    if (Array.isArray(newsItem.content)) {
-      // If content is an array of paragraphs
-      return newsItem.content.map((paragraph, index) => (
-        <p key={index}>{paragraph}</p>
-      ));
-    } else if (typeof newsItem.content === 'string') {
-      // If content is a string with newlines
-      return newsItem.content.split('\n\n').map((paragraph, index) => (
-        <p key={index}>{paragraph}</p>
+const renderContent = () => {
+  // Handle case when content is completely missing
+  if (!newsItem.content) {
+    return <p className="no-content">No content available</p>;
+  }
+  
+  // For array content, we need to combine fragments into coherent paragraphs
+  if (Array.isArray(newsItem.content)) {
+    // First, filter out empty items
+    const filteredContent = newsItem.content.filter(item => item && item.trim().length > 0);
+    
+    if (filteredContent.length === 0) {
+      return <p className="no-content">No content available</p>;
+    }
+    
+    // Detect if we have very short fragments that need to be joined
+    const hasFragments = filteredContent.some(item => item.trim().length <= 3);
+    
+    if (hasFragments) {
+      // Join all fragments into a single string first
+      const combinedText = filteredContent.join(' ');
+      
+      // Then split into proper paragraphs using more reliable separators
+      const paragraphs = combinedText
+        .split(/(?:\.|\?|!)\s+(?=[A-Z])/)
+        .filter(p => p && p.trim().length > 0)
+        .map(p => p.trim());
+      
+      return paragraphs.map((paragraph, index) => (
+        <p key={index} className="content-paragraph">{paragraph}{index < paragraphs.length - 1 ? '.' : ''}</p>
       ));
     }
-    return <p>No content available</p>;
-  };
+    
+    // If we have normal length items, just render each as a paragraph
+    return filteredContent.map((paragraph, index) => (
+      <p key={index} className="content-paragraph">{paragraph}</p>
+    ));
+  } 
+  
+  // For string content
+  else if (typeof newsItem.content === 'string') {
+    // Remove any HTML tags that might be present
+    const cleanContent = newsItem.content.replace(/<\/?[^>]+(>|$)/g, ' ');
+    
+    // Split by common paragraph separators
+    let paragraphs = cleanContent
+      .split(/\n{2,}|\r\n{2,}|\.\s+(?=[A-Z])|\?\s+(?=[A-Z])|\!\s+(?=[A-Z])/)
+      .filter(p => p && p.trim().length > 0)
+      .map(p => p.trim());
+    
+    // If we have too many small fragments, try to combine them
+    if (paragraphs.some(p => p.trim().length <= 3)) {
+      const combinedText = paragraphs.join(' ');
+      paragraphs = combinedText
+        .split(/(?:\.|\?|!)\s+(?=[A-Z])/)
+        .filter(p => p && p.trim().length > 0)
+        .map(p => p.trim());
+    }
+    
+    if (paragraphs.length === 0) {
+      return <p className="no-content">No content available</p>;
+    }
+    
+    return paragraphs.map((paragraph, index) => (
+      <p key={index} className="content-paragraph">
+        {paragraph}{!paragraph.endsWith('.') && !paragraph.endsWith('?') && 
+          !paragraph.endsWith('!') && index < paragraphs.length - 1 ? '.' : ''}
+      </p>
+    ));
+  }
+  
+  return <p className="no-content">No content available</p>;
+};
+
+// Add this helper function to your component to help with text normalization
+const normalizeText = (text) => {
+  if (!text) return '';
+  return text
+    .replace(/\s+/g, ' ')
+    .trim();
+};
 
   return (
     <>

@@ -107,3 +107,32 @@ exports.deleteCategorizedArticle = async (req, res) => {
         res.status(500).json({ msg: "Server error", error: error.message });
     }
 };
+
+
+// Search for articles by keyword
+exports.searchArticles = async (req, res) => {
+    try {
+        const { query } = req.query; // Get the search query from request parameters
+
+        if (!query) {
+            return res.status(400).json({ msg: "Search query is required" });
+        }
+
+        // Perform a case-insensitive search in title, content, and publication
+        const articles = await ScrapedArticle.find({
+            $or: [
+                { title: { $regex: query, $options: "i" } },
+                { content: { $regex: query, $options: "i" } },
+                { publication: { $regex: query, $options: "i" } },
+            ],
+        });
+
+        if (articles.length === 0) {
+            return res.status(404).json({ msg: "No matching articles found" });
+        }
+
+        res.json(articles);
+    } catch (error) {
+        res.status(500).json({ msg: "Server error", error: error.message });
+    }
+};

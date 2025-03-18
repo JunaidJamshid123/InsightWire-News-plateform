@@ -5,7 +5,8 @@ const {
     createScrapedArticle, 
     getCategorizedArticles, 
     createCategorizedArticle, 
-    getCategorizedArticleById
+    getCategorizedArticleById,
+    searchArticles
 } = require("../controllers/articleController");
 
 const router = express.Router();
@@ -15,7 +16,7 @@ router.get("/scraped", getScrapedArticles);
 router.get("/scraped/:id", getScrapedArticleById);
 // Create a new scraped article
 router.post("/scraped", createScrapedArticle);
-
+router.get("/search", searchArticles);
 // Get all categorized articles with associated scraped articles
 router.get("/categorized", getCategorizedArticles);
 
