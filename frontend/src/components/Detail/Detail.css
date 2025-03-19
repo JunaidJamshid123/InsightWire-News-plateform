@@ -41,6 +41,42 @@
     background-color: #f7f8fa;
 }
 
+/* Read Aloud button styles */
+.read-aloud-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #1e40af;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+    margin-bottom: 1.5rem;
+}
+
+.read-aloud-button:hover {
+    background-color: #1e3a8a;
+    transform: translateY(-2px);
+}
+
+.read-aloud-button:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+/* Add styles for the stop state */
+.read-aloud-button[aria-label="Stop reading"] {
+    background-color: #ef4444;
+}
+
+.read-aloud-button[aria-label="Stop reading"]:hover {
+    background-color: #dc2626;
+}
+
 .article-title {
     font-size: 2.5rem;
     line-height: 1.2;
@@ -90,6 +126,7 @@
     display: block;
     transition: transform 0.3s ease;
 }
+
 /* Add to your Detail.css file */
 
 .article-content {
