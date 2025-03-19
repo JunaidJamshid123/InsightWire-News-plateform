@@ -11,6 +11,7 @@ import MediaBias from "./components/MediaBais/MediaBais"
 import StoryComparison from "./components/StroyComparision/StoryComparision"
 import BiasDetails from './components/MediaBais/BiasDetails';
 import StoryDetails from './components/StroyComparision/StoryDetails';
+import SearchResults from './components/SearchResults';
 import "./App.css"
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
           <Route path="/news/:id" element={<NewsDetails />} />
           <Route path="/bias-details/:id" element={<BiasDetails />} />
           <Route path="/story-details/:id" element={<StoryDetails />} />
+          <Route path="/search" element={<SearchResults />} />
           
           {/* Personalized Feed Route */}
           <Route path="/personalized-feed" element={<PersonalizedFeed />} />

@@ -1,3 +1,4 @@
+// Navbar.js
 'use client'
 
 import React, { useState, useEffect } from 'react';
@@ -14,6 +15,7 @@ const Navbar = ({ onNavClick }) => {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeLink, setActiveLink] = useState('/');
+  const [searchQuery, setSearchQuery] = useState('');
   const navLinks = [
     { name: 'News', path: '/' },
     { name: 'Media Bias', path: '/media-bias' },
@@ -55,6 +57,23 @@ const Navbar = ({ onNavClick }) => {
     setMenuOpen(false);
   };
 
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  // Handle search form submission
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      // Navigate to search results page with query parameter
+      navigate(`/search?query=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery('');
+      setMobileNavOpen(false);
+      setMenuOpen(false);
+    }
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -86,17 +105,19 @@ const Navbar = ({ onNavClick }) => {
           </div>
 
           <div className="navbar-right">
-            <div className={`navbar-search ${searchFocused ? 'focused' : ''}`}>
+            <form onSubmit={handleSearch} className={`navbar-search ${searchFocused ? 'focused' : ''}`}>
               <input 
                 type="text" 
                 placeholder="Balanced Search" 
+                value={searchQuery}
+                onChange={handleSearchChange}
                 onFocus={() => setSearchFocused(true)}
                 onBlur={() => setSearchFocused(false)}
               />
-              <button className="search-button">
+              <button type="submit" className="search-button">
                 <Search size={18} />
               </button>
-            </div>
+            </form>
 
             <button className="menu-button" onClick={handleMenuClick}>
               {menuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -152,12 +173,17 @@ const Navbar = ({ onNavClick }) => {
             </li>
           ))}
         </ul>
-        <div className="navbar-search-mobile">
-          <input type="text" placeholder="Balanced Search" />
-          <button className="search-button">
+        <form onSubmit={handleSearch} className="navbar-search-mobile">
+          <input 
+            type="text" 
+            placeholder="Balanced Search" 
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+          <button type="submit" className="search-button">
             <Search size={18} />
           </button>
-        </div>
+        </form>
       </div>
 
       {/* Overlay for clicking outside to close menus */}

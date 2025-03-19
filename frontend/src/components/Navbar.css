@@ -1,3 +1,4 @@
+/* Navbar.css */
 .navbar {
   background-color: #1e1e1e;
   color: white;
@@ -32,7 +33,8 @@
 }
 
 .navbar-links {
-  margin-left: 40px;
+  margin-left: 20px;
+  /* Reduced from 40px */
 }
 
 .navbar-links ul {
@@ -40,20 +42,25 @@
   list-style-type: none;
   margin: 0;
   padding: 0;
-  gap: 36px;
+  gap: 20px;
+  /* Reduced from 36px */
 }
 
 .navbar-links a {
   color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
-  font-size: 16px;
+  font-size: 15px;
+  /* Reduced from 16px */
   font-weight: 600;
   transition: all 0.3s ease;
-  padding: 8px 0;
+  padding: 8px 4px;
+  /* Added horizontal padding */
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
+  white-space: nowrap;
+  /* Prevents text wrapping */
 }
 
 .navbar-links a:hover {
@@ -66,12 +73,14 @@
 
 .nav-indicator {
   position: absolute;
-  bottom: -6px;
-  height: 3px;
+  bottom: -4px;
+  /* Moved up from -6px */
+  height: 2px;
+  /* Reduced from 3px */
   width: 0;
   background-color: #ff5555;
   transition: width 0.3s ease;
-  border-radius: 3px;
+  border-radius: 2px;
 }
 
 .navbar-links a:hover .nav-indicator {
@@ -85,55 +94,92 @@
 .navbar-right {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 16px;
+  /* Reduced from 24px */
 }
 
+/* Updated Search Box Styles */
 .navbar-search {
   display: flex;
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 24px;
-  padding: 0 8px;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  /* Reduced from 24px */
+  padding: 0 4px 0 8px;
   transition: all 0.3s ease;
-  border: 2px solid transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  height: 34px;
+  /* Added fixed height */
+  max-width: 200px;
+  /* Added max-width */
 }
 
 .navbar-search.focused {
-  background-color: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 135, 135, 0.5);
-  box-shadow: 0 0 0 4px rgba(255, 85, 85, 0.1);
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 85, 85, 0.4);
+  box-shadow: 0 0 0 2px rgba(255, 85, 85, 0.1);
+  /* Reduced from 4px */
 }
 
 .navbar-search input {
   background-color: transparent;
   border: none;
-  padding: 10px 16px;
-  color: white;
-  width: 200px;
-  font-size: 14px;
+  padding: 7px 8px;
+  /* Reduced padding */
+  color: rgba(255, 255, 255, 0.9);
+  width: 140px;
+  /* Reduced from 180px */
+  font-size: 13px;
+  /* Reduced from 14px */
+  font-weight: 500;
   outline: none;
+  letter-spacing: 0.2px;
+  height: 100%;
+  /* Make input take full height */
 }
 
 .navbar-search input::placeholder {
   color: rgba(255, 255, 255, 0.5);
+  font-weight: 400;
 }
 
 .search-button {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 8px;
+  padding: 4px;
+  /* Reduced from 6px */
   color: rgba(255, 255, 255, 0.6);
-  transition: color 0.2s ease;
+  transition: all 0.2s ease;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-left: 2px;
+  height: 24px;
+  /* Fixed height */
+  width: 24px;
+  /* Fixed width */
 }
 
 .search-button:hover {
   color: #ff5555;
   background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* For the search icon size */
+.search-button svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Make sure the search bar aligns properly with the rest of the navbar */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 100%;
 }
 
 /* Menu Button Styles */
@@ -142,7 +188,8 @@
   border: none;
   color: white;
   cursor: pointer;
-  padding: 8px;
+  padding: 6px;
+  /* Reduced from 8px */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -180,19 +227,23 @@
 }
 
 .menu-content {
-  padding: 20px;
+  padding: 16px;
+  /* Reduced from 20px */
 }
 
 .menu-header {
-  padding-bottom: 16px;
+  padding-bottom: 12px;
+  /* Reduced from 16px */
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .notification-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px;
+  gap: 10px;
+  /* Reduced from 12px */
+  padding: 8px;
+  /* Reduced from 10px */
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -216,17 +267,21 @@
 }
 
 .menu-actions {
-  padding-top: 16px;
+  padding-top: 12px;
+  /* Reduced from 16px */
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
+  /* Reduced from 12px */
 }
 
 .menu-action-btn {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px;
+  gap: 10px;
+  /* Reduced from 12px */
+  padding: 10px;
+  /* Reduced from 12px */
   background: none;
   border: none;
   color: white;
@@ -273,7 +328,8 @@
   border: none;
   color: white;
   cursor: pointer;
-  padding: 8px;
+  padding: 6px;
+  /* Reduced from 8px */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -303,7 +359,8 @@
 
 .navbar-mobile-menu.open {
   max-height: 500px;
-  padding: 20px;
+  padding: 16px;
+  /* Reduced from 20px */
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
@@ -313,16 +370,19 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
+  /* Reduced from 16px */
 }
 
 .navbar-mobile-menu a {
   color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
-  font-size: 18px;
+  font-size: 16px;
+  /* Reduced from 18px */
   font-weight: 600;
   transition: all 0.3s ease;
-  padding: 12px 8px;
+  padding: 10px 8px;
+  /* Reduced from 12px 8px */
   display: block;
   position: relative;
   border-radius: 8px;
@@ -358,27 +418,40 @@
   height: 70%;
 }
 
+/* Updated Mobile Search */
 .navbar-search-mobile {
-  margin-top: 20px;
+  margin-top: 16px;
+  /* Reduced from 20px */
   display: flex;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-search-mobile input {
   background-color: transparent;
   border: none;
-  padding: 14px 16px;
-  color: white;
+  padding: 12px 14px;
+  /* Reduced from 14px 16px */
+  color: rgba(255, 255, 255, 0.9);
   width: 100%;
-  font-size: 16px;
+  font-size: 15px;
+  /* Reduced from 16px */
+  font-weight: 500;
   outline: none;
+  letter-spacing: 0.2px;
+}
+
+.navbar-search-mobile input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 400;
 }
 
 .navbar-search-mobile .search-button {
-  padding: 14px;
+  padding: 12px;
+  /* Reduced from 14px */
 }
 
 .menu-overlay {
@@ -403,6 +476,7 @@
   }
 }
 
+/* Media Queries with improved values */
 @media (max-width: 1024px) {
   .navbar-links {
     display: none;
@@ -422,6 +496,19 @@
 
   .menu-dropdown {
     right: 16px;
+  }
+}
+
+/* Additional breakpoint for medium screens */
+@media (max-width: 1200px) and (min-width: 1025px) {
+  .navbar-links ul {
+    gap: 14px;
+    /* Even smaller gap for medium screens */
+  }
+
+  .navbar-links a {
+    font-size: 14px;
+    /* Smaller font for medium screens */
   }
 }
 
