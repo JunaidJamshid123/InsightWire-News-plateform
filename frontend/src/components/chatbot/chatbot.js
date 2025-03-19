@@ -17,15 +17,49 @@ const Chatbot = () => {
     setUserInput(e.target.value)
   }
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (userInput.trim()) {
+      // Add user message to chat
       setMessages([...messages, { text: userInput, sender: "user" }])
       setIsTyping(true)
-      setTimeout(() => {
-        setMessages((prev) => [...prev, { text: "This is a response from the chatbot.", sender: "bot" }])
+      
+      try {
+        // Send request to API with CORS handling
+        const response = await fetch("https://dd6e-203-215-167-154.ngrok-free.app/query", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            session_id: "user1",
+            query: userInput
+          }),
+          // Add CORS mode
+          mode: "cors",
+          // Add credentials if needed (remove if not required)
+          credentials: "same-origin"
+        })
+
+        if (!response.ok) {
+          throw new Error("API request failed with status: " + response.status)
+        }
+
+        const data = await response.json()
+        
+        // Add bot response to chat
+        setMessages((prev) => [...prev, { text: data.response, sender: "bot" }])
+      } catch (error) {
+        console.error("Error fetching from API:", error)
+        
+        // For development: Show a more detailed error message with CORS suggestion
+        setMessages((prev) => [...prev, { 
+          text: "Sorry, I couldn't process your request due to a CORS issue. You'll need to either: 1) Configure the API server to allow CORS, 2) Use a proxy server, or 3) Create a backend API route to forward the request.",
+          sender: "bot" 
+        }])
+      } finally {
         setIsTyping(false)
-      }, 1000)
-      setUserInput("")
+        setUserInput("")
+      }
     }
   }
 
@@ -64,6 +98,11 @@ const Chatbot = () => {
             </button>
           </div>
           <div className="chatbot-messages">
+            {messages.length === 0 && (
+              <div className="welcome-message">
+                Hello! How can I help you today?
+              </div>
+            )}
             {messages.map((msg, index) => (
               <div key={index} className={`chatbot-message ${msg.sender}`}>
                 {msg.text}
@@ -78,8 +117,11 @@ const Chatbot = () => {
               onChange={handleInputChange}
               onKeyPress={handleKeyPress}
               placeholder="Type your question..."
+              disabled={isTyping}
             />
-            <button onClick={handleSend}>Send</button>
+            <button onClick={handleSend} disabled={isTyping || !userInput.trim()}>
+              Send
+            </button>
           </div>
         </div>
       )}
@@ -88,4 +130,3 @@ const Chatbot = () => {
 }
 
 export default Chatbot
-
