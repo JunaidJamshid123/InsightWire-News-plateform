@@ -9,6 +9,31 @@ const StoryDetails = () => {
   const [activeTab, setActiveTab] = useState("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [rewrittenContent, setRewrittenContent] = useState(null);
+  const [apiStatus, setApiStatus] = useState("");
+
+  // Update to the correct ngrok URL
+  const REWRITE_API_URL = "https://47b7-203-215-167-155.ngrok-free.app/rewrite";
+
+  // Helper function to map bias label to string
+  const mapBiasToString = (bias) => {
+    switch(bias) {
+      case "LABEL_0": return "left";
+      case "LABEL_1": return "center";
+      case "LABEL_2": return "right";
+      default: return "center";
+    }
+  };
+
+  // Helper function to get the opposite bias
+  const getOppositeBias = (bias) => {
+    switch(bias) {
+      case "left": return "right";
+      case "right": return "left";
+      case "center": return "center";
+      default: return "center";
+    }
+  };
 
   useEffect(() => {
     // First, try to get the story from sessionStorage (set by StoryComparison)
@@ -19,8 +44,9 @@ const StoryDetails = () => {
         const parsedArticle = JSON.parse(storedArticle);
         
         // Verify this is the correct article by checking ID
-        if (parsedArticle.id === id) {
+        if (parsedArticle.id === id || parsedArticle._id === id) {
           setStory(parsedArticle);
+          fetchRewrittenContent(parsedArticle);
           setLoading(false);
           return;
         }
@@ -43,53 +69,18 @@ const StoryDetails = () => {
         }
         
         const articleData = await response.json();
+        console.log("Article data fetched:", articleData);
         
-        // Generate sample perspective data
-        // In a real app, this would come from your backend
-        const perspectives = {
-          left: {
-            title: articleData.title,
-            content: "This is the left-leaning perspective on the story...",
-            sources: 67,
-            keyPoints: [
-              "Emphasis on social impacts",
-              "Focus on affected communities",
-              "Concerns about long-term implications",
-              "Historical context of similar situations"
-            ]
-          },
-          center: {
-            title: articleData.title,
-            content: "This is the centrist perspective on the story...",
-            sources: 98,
-            keyPoints: [
-              "Balanced reporting of key facts",
-              "Equal coverage of multiple viewpoints",
-              "Context about broader implications",
-              "Focus on verified information"
-            ]
-          },
-          right: {
-            title: articleData.title,
-            content: "This is the right-leaning perspective on the story...",
-            sources: 51,
-            keyPoints: [
-              "Focus on economic impacts",
-              "Individual liberty considerations",
-              "Traditional values perspective",
-              "National security implications"
-            ]
-          }
-        };
-        
-        // Set the story with perspectives
-        setStory({
+        // Set the story
+        const processedArticle = {
           ...articleData,
           id: articleData._id || id,
-          perspectives,
           category: articleData.category || "News",
           publicationDate: formatDate(articleData.date)
-        });
+        };
+        
+        setStory(processedArticle);
+        fetchRewrittenContent(processedArticle);
         
       } catch (err) {
         console.error("Error fetching story:", err);
@@ -101,6 +92,171 @@ const StoryDetails = () => {
 
     fetchStory();
   }, [id]);
+  
+  // Fetch rewritten content from the rewrite API
+  const fetchRewrittenContent = async (article) => {
+    try {
+      // Make sure we have the ID
+      const articleId = article._id || id;
+      if (!articleId) {
+        throw new Error("Article ID is missing");
+      }
+      
+      const biasnessString = mapBiasToString(article.biasness);
+      console.log("Sending request to rewrite API:", {
+        article_id: articleId,
+        bias_tag: biasnessString
+      });
+      
+      setApiStatus("Sending request to rewrite API...");
+      
+      const response = await fetch(REWRITE_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          article_id: articleId,
+          bias_tag: biasnessString
+        }),
+      });
+      
+      console.log("Rewrite API response status:", response.status);
+      setApiStatus(`API response status: ${response.status}`);
+      
+      if (!response.ok) {
+        throw new Error(`Rewrite API call failed with status: ${response.status}`);
+      }
+      
+      const rewrittenData = await response.json();
+      console.log("Rewritten data received:", rewrittenData);
+      setApiStatus("Successfully received rewritten content");
+      setRewrittenContent(rewrittenData);
+      
+      // Now generate the perspectives based on the original and rewritten content
+      generatePerspectives(article, rewrittenData, biasnessString);
+      
+    } catch (err) {
+      console.error("Error fetching rewritten content:", err);
+      setApiStatus(`Error: ${err.message}`);
+      
+      // If API fails, still generate perspectives with fallback content
+      generatePerspectivesWithFallback(article);
+    }
+  };
+  
+  // Generate perspectives without rewritten content (fallback)
+  const generatePerspectivesWithFallback = (article) => {
+    console.log("Generating perspectives with fallback content");
+    
+    const joinedContent = Array.isArray(article.content) 
+      ? article.content.join('\n') 
+      : article.content || "Content not available";
+    
+    const originalBias = mapBiasToString(article.biasness);
+    
+    // Create mock perspectives
+    const perspectives = {
+      left: {
+        title: article.title,
+        content: originalBias === "left" ? joinedContent : "Left-leaning perspective is not available (API error). This would typically emphasize social impacts and focus on affected communities.",
+        sources: 67,
+        keyPoints: generateKeyPoints("left"),
+        publication: originalBias === "left" ? article.publication : "Not available"
+      },
+      center: {
+        title: article.title,
+        content: originalBias === "center" ? joinedContent : "Center perspective is not available (API error). This would typically provide balanced reporting of key facts with equal coverage of multiple viewpoints.",
+        sources: 98,
+        keyPoints: generateKeyPoints("center"),
+        publication: originalBias === "center" ? article.publication : "Not available"
+      },
+      right: {
+        title: article.title,
+        content: originalBias === "right" ? joinedContent : "Right-leaning perspective is not available (API error). This would typically focus on economic impacts and traditional values perspective.",
+        sources: 51,
+        keyPoints: generateKeyPoints("right"),
+        publication: originalBias === "right" ? article.publication : "Not available"
+      }
+    };
+    
+    // Update the story with perspectives
+    setStory(prevStory => ({
+      ...prevStory,
+      perspectives
+    }));
+  };
+  
+  // Generate perspectives based on original and rewritten content
+  const generatePerspectives = (article, rewrittenData, originalBias) => {
+    console.log("Generating perspectives with rewritten content");
+    const oppositeBias = getOppositeBias(originalBias);
+    
+    const joinedContent = Array.isArray(article.content) 
+      ? article.content.join('\n') 
+      : article.content || "Content not available";
+    
+    const perspectives = {
+      left: {
+        title: article.title,
+        content: originalBias === "left" ? joinedContent : 
+                 (oppositeBias === "left" ? rewrittenData.rewritten_opposite : rewrittenData.rewritten_center),
+        sources: 67,
+        keyPoints: generateKeyPoints("left"),
+        publication: originalBias === "left" ? article.publication : "Generated"
+      },
+      center: {
+        title: article.title,
+        content: originalBias === "center" ? joinedContent : rewrittenData.rewritten_center,
+        sources: 98,
+        keyPoints: generateKeyPoints("center"),
+        publication: originalBias === "center" ? article.publication : "Generated"
+      },
+      right: {
+        title: article.title,
+        content: originalBias === "right" ? joinedContent : 
+                (oppositeBias === "right" ? rewrittenData.rewritten_opposite : rewrittenData.rewritten_center),
+        sources: 51,
+        keyPoints: generateKeyPoints("right"),
+        publication: originalBias === "right" ? article.publication : "Generated"
+      }
+    };
+    
+    // Update the story with perspectives
+    setStory(prevStory => ({
+      ...prevStory,
+      perspectives
+    }));
+  };
+  
+  // Generate sample key points based on perspective
+  const generateKeyPoints = (perspective) => {
+    switch(perspective) {
+      case "left":
+        return [
+          "Emphasis on social impacts",
+          "Focus on affected communities",
+          "Concerns about long-term implications",
+          "Historical context of similar situations"
+        ];
+      case "center":
+        return [
+          "Balanced reporting of key facts",
+          "Equal coverage of multiple viewpoints",
+          "Context about broader implications",
+          "Focus on verified information"
+        ];
+      case "right":
+        return [
+          "Focus on economic impacts",
+          "Individual liberty considerations",
+          "Traditional values perspective",
+          "National security implications"
+        ];
+      default:
+        return ["Key point not available"];
+    }
+  };
   
   // Format date nicely
   const formatDate = (dateString) => {
@@ -145,7 +301,16 @@ const StoryDetails = () => {
   }
 
   // Extract perspectives from the story
-  const { perspectives } = story;
+  const { perspectives } = story || { perspectives: null };
+
+  if (!perspectives) {
+    return (
+      <div className="loading-container">
+        <div className="pulse-loader"></div>
+        <p>Generating perspectives...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="story-details-container">
@@ -157,7 +322,18 @@ const StoryDetails = () => {
         <div className="story-meta">
           <span className="story-category">{story.category}</span>
           <span className="story-date">Published: {story.publicationDate}</span>
+          {story.publication && <span className="story-publication">Source: {story.publication}</span>}
+          {story.biasness && (
+            <span className={`story-bias ${mapBiasToString(story.biasness)}-bias`}>
+              Original Bias: {mapBiasToString(story.biasness)}
+            </span>
+          )}
         </div>
+        {apiStatus && (
+          <div className="api-status">
+            <small>API Status: {apiStatus}</small>
+          </div>
+        )}
       </div>
 
       <div className="perspective-tabs">
@@ -197,10 +373,13 @@ const StoryDetails = () => {
               <div className="perspective-header">
                 <div className="perspective-indicator left-indicator"></div>
                 <h3>Left-Leaning Perspective</h3>
-                <span className="source-count">{perspectives.left.sources} sources</span>
+                <span className="source-count">
+                  {perspectives.left.sources} sources
+                  {perspectives.left.publication && ` • ${perspectives.left.publication}`}
+                </span>
               </div>
               <h4>{perspectives.left.title}</h4>
-              <p>{perspectives.left.content}</p>
+              <p className="perspective-text">{perspectives.left.content}</p>
               <div className="key-points">
                 <h5>Key Focus Points:</h5>
                 <ul>
@@ -215,10 +394,13 @@ const StoryDetails = () => {
               <div className="perspective-header">
                 <div className="perspective-indicator center-indicator"></div>
                 <h3>Center Perspective</h3>
-                <span className="source-count">{perspectives.center.sources} sources</span>
+                <span className="source-count">
+                  {perspectives.center.sources} sources
+                  {perspectives.center.publication && ` • ${perspectives.center.publication}`}
+                </span>
               </div>
               <h4>{perspectives.center.title}</h4>
-              <p>{perspectives.center.content}</p>
+              <p className="perspective-text">{perspectives.center.content}</p>
               <div className="key-points">
                 <h5>Key Focus Points:</h5>
                 <ul>
@@ -233,10 +415,13 @@ const StoryDetails = () => {
               <div className="perspective-header">
                 <div className="perspective-indicator right-indicator"></div>
                 <h3>Right-Leaning Perspective</h3>
-                <span className="source-count">{perspectives.right.sources} sources</span>
+                <span className="source-count">
+                  {perspectives.right.sources} sources
+                  {perspectives.right.publication && ` • ${perspectives.right.publication}`}
+                </span>
               </div>
               <h4>{perspectives.right.title}</h4>
-              <p>{perspectives.right.content}</p>
+              <p className="perspective-text">{perspectives.right.content}</p>
               <div className="key-points">
                 <h5>Key Focus Points:</h5>
                 <ul>
@@ -311,11 +496,14 @@ const StoryDetails = () => {
             <div className="perspective-header">
               <div className={`perspective-indicator ${activeTab}-indicator`}></div>
               <h3>{activeTab === 'left' ? 'Left-Leaning' : activeTab === 'right' ? 'Right-Leaning' : 'Center'} Perspective</h3>
-              <span className="source-count">{perspectives[activeTab].sources} sources</span>
+              <span className="source-count">
+                {perspectives[activeTab].sources} sources
+                {perspectives[activeTab].publication && ` • ${perspectives[activeTab].publication}`}
+              </span>
             </div>
             <h4>{perspectives[activeTab].title}</h4>
             <div className="perspective-content">
-              <p>{perspectives[activeTab].content}</p>
+              <p className="perspective-text">{perspectives[activeTab].content}</p>
               <div className="key-points">
                 <h5>Key Focus Points:</h5>
                 <ul>

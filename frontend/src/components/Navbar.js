@@ -7,7 +7,7 @@ import './Navbar.css';
 import Logo from './Images/news_logo.png'
 import Login from './login/Login';
 import Signup from "./signup/Signup"
-import {User, LogIn, UserPlus, Menu, Search, X } from 'lucide-react';
+import {User, LogIn, UserPlus,Search, X } from 'lucide-react';
 
 const Navbar = ({ onNavClick }) => {
   const navigate = useNavigate();
@@ -118,13 +118,13 @@ const Navbar = ({ onNavClick }) => {
             </form>
 
             <button className="menu-button" onClick={handleMenuClick}>
-              {menuOpen ? <X size={24} /> : <Menu size={24} />}
+              {menuOpen ? <X size={24} /> : <User size={24} />}
             </button>
           </div>
 
           <div className="navbar-mobile-toggle">
             <button onClick={handleMobileNavClick}>
-              {mobileNavOpen ? <X size={24} /> : <Menu size={24} />}
+              {mobileNavOpen ? <X size={24} /> : <User size={24} />}
             </button>
           </div>
         </div>
