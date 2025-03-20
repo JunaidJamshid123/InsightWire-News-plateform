@@ -82,22 +82,11 @@ const StoryDetails = () => {
           }
         };
         
-        // Sample coverage data
-        const coverageData = {
-          total: 216,
-          left: 67,
-          right: 51,
-          center: 98,
-          lastUpdated: "1 hour ago",
-          biasDistribution: "45% Center"
-        };
-        
-        // Set the story with perspectives and coverage data
+        // Set the story with perspectives
         setStory({
           ...articleData,
           id: articleData._id || id,
           perspectives,
-          coverageData,
           category: articleData.category || "News",
           publicationDate: formatDate(articleData.date)
         });
@@ -145,7 +134,8 @@ const StoryDetails = () => {
   }
 
   if (error || !story) {
-    return (<div className="error-container">
+    return (
+      <div className="error-container">
         <div className="error-icon">!</div>
         <h2>Oops! We couldn't find that story</h2>
         <p>{error || "The requested story could not be found"}</p>
@@ -154,8 +144,8 @@ const StoryDetails = () => {
     );
   }
 
-  // Extract perspectives and coverage data from the story
-  const { perspectives, coverageData } = story;
+  // Extract perspectives from the story
+  const { perspectives } = story;
 
   return (
     <div className="story-details-container">
@@ -167,65 +157,6 @@ const StoryDetails = () => {
         <div className="story-meta">
           <span className="story-category">{story.category}</span>
           <span className="story-date">Published: {story.publicationDate}</span>
-        </div>
-      </div>
-
-      <div className="story-coverage-summary">
-        <div className="coverage-card">
-          <h3>Coverage Details</h3>
-          <div className="coverage-stats">
-            <div className="stat-row">
-              <span className="stat-label">Total News Sources</span>
-              <span className="stat-value">{coverageData.total}</span>
-            </div>
-            <div className="stat-row">
-              <span className="stat-label">Leaning Left</span>
-              <span className="stat-value">{coverageData.left}</span>
-            </div>
-            <div className="stat-row">
-              <span className="stat-label">Leaning Right</span>
-              <span className="stat-value">{coverageData.right}</span>
-            </div>
-            <div className="stat-row">
-              <span className="stat-label">Center</span>
-              <span className="stat-value">{coverageData.center}</span>
-            </div>
-            <div className="stat-row">
-              <span className="stat-label">Last Updated</span>
-              <span className="stat-value">{coverageData.lastUpdated}</span>
-            </div>
-            <div className="stat-row">
-              <span className="stat-label">Bias Distribution</span>
-              <span className="stat-value">{coverageData.biasDistribution}</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="bias-visualization">
-          <h3>Coverage Distribution</h3>
-          <div className="bias-chart">
-            <div 
-              className="bias-bar left-bar" 
-              style={{ width: `${(coverageData.left / coverageData.total) * 100}%` }}
-            >
-              <span className="bias-label">Left</span>
-              <span className="bias-percentage">{Math.round((coverageData.left / coverageData.total) * 100)}%</span>
-            </div>
-            <div 
-              className="bias-bar center-bar" 
-              style={{ width: `${(coverageData.center / coverageData.total) * 100}%` }}
-            >
-              <span className="bias-label">Center</span>
-              <span className="bias-percentage">{Math.round((coverageData.center / coverageData.total) * 100)}%</span>
-            </div>
-            <div 
-              className="bias-bar right-bar" 
-              style={{ width: `${(coverageData.right / coverageData.total) * 100}%` }}
-            >
-              <span className="bias-label">Right</span>
-              <span className="bias-percentage">{Math.round((coverageData.right / coverageData.total) * 100)}%</span>
-            </div>
-          </div>
         </div>
       </div>
 
