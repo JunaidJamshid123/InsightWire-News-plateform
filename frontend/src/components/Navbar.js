@@ -114,9 +114,7 @@ const Navbar = ({ onNavClick }) => {
                 onFocus={() => setSearchFocused(true)}
                 onBlur={() => setSearchFocused(false)}
               />
-              <button type="submit" className="search-button">
-                <Search size={18} />
-              </button>
+             
             </form>
 
             <button className="menu-button" onClick={handleMenuClick}>
