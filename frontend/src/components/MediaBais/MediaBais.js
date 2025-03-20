@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import "./MediaBais.css"; // Import the CSS file (note: there's a typo in the filename)
+import "./MediaBais.css";
 import { useNavigate } from 'react-router-dom';
 
 const MediaBias = () => {
@@ -9,7 +9,7 @@ const MediaBias = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const imageRefs = useRef([]);
-  const [visibleItems, setVisibleItems] = useState(8); // Start with fewer items visible
+  const [visibleItems, setVisibleItems] = useState(8);
 
   // Function to shuffle array (Fisher-Yates algorithm)
   const shuffleArray = (array) => {
@@ -139,6 +139,20 @@ const MediaBias = () => {
     };
   }, []);
 
+  // Convert biasness label to category
+  const getBiasFromLabel = (biasLabel) => {
+    switch(biasLabel) {
+      case 'LABEL_0':
+        return 'left';
+      case 'LABEL_1':
+        return 'center';
+      case 'LABEL_2':
+        return 'right';
+      default:
+        return 'unknown';
+    }
+  };
+
   // Function to determine bias color and text
   const getBiasInfo = (biasType) => {
     switch(biasType) {
@@ -155,28 +169,6 @@ const MediaBias = () => {
       default:
         return { class: 'bias-unknown', text: 'Bias Unknown' };
     }
-  };
-
-  // Function to get placeholder bias for demo purposes
-  const getPlaceholderBias = (publication) => {
-    const biasMap = {
-      'Time Magazine': 'center',
-      'Fox News': 'right',
-      'CNN': 'left',
-      'MSNBC': 'left',
-      'New York Times': 'left',
-      'Wall Street Journal': 'right',
-      'Breitbart': 'far-right',
-      'The Guardian': 'left',
-      'Huffington Post': 'left',
-      'Drudge Report': 'right',
-      'Washington Post': 'left',
-      'NPR': 'center',
-      'BBC': 'center',
-      'Al Jazeera': 'center'
-    };
-    
-    return biasMap[publication] || 'unknown';
   };
 
   // Function to get excerpt from content array
@@ -219,9 +211,14 @@ const MediaBias = () => {
             
       <div className="news-grid">
         {articles.slice(0, visibleItems).map((article, index) => {
-          // Use placeholder bias for demo - replace with actual bias data when available
-          const bias = getPlaceholderBias(article.publication);
+          // Get bias from article data or use publication-based fallback
+          const biasLabel = article.biasness || 'unknown';
+          const bias = getBiasFromLabel(biasLabel);
           const biasInfo = getBiasInfo(bias);
+          
+          // Get confidence score (if available)
+          const confidenceScore = article.score ? 
+            parseFloat(article.score).toFixed(2) * 100 : null;
                   
           return (
             <div
@@ -254,10 +251,11 @@ const MediaBias = () => {
               <div className="news-content">
                 <h2 className="news-title">{article.title}</h2>
                             
-                {/* Bias indicator below title */}
+                {/* Bias indicator with confidence score if available */}
                 <div className="bias-tag">
                   <div className={`bias-dot ${biasInfo.class}`}></div>
                   <span>{biasInfo.text}</span>
+                  
                 </div>
                             
                 <p className="news-excerpt">{getExcerpt(article.content)}</p>

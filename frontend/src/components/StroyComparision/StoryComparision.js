@@ -7,11 +7,12 @@ const StoryComparison = () => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [visibleArticles, setVisibleArticles] = useState([]);
+  const [visibleItems, setVisibleItems] = useState(12); // Initial number of visible items
 
   useEffect(() => {
     const fetchArticles = async () => {
       try {
+        // Show loading state immediately
         setLoading(true);
         
         // Fetch articles from the API
@@ -23,37 +24,37 @@ const StoryComparison = () => {
         
         const articlesData = await response.json();
         
-        // Fetch images for all articles
-        const articlesWithImages = await Promise.all(
-          articlesData.map(async (article) => {
-            let imageUrl = "https://source.unsplash.com/random/1200x600/?news";
-            
-            if (article.url) {
-              try {
-                const imageResponse = await fetch(
-                  `http://localhost:5000/api/extract-image?url=${encodeURIComponent(article.url)}`
-                );
-                
-                if (imageResponse.ok) {
-                  const imageData = await imageResponse.json();
-                  imageUrl = imageData.imageUrl || imageUrl;
-                }
-              } catch (err) {
-                console.error("Error extracting image for article:", err);
-              }
-            }
-            
-            // Generate perspective data for each article
-            // This would come from your backend in a real application
-            const biasTypes = ["L", "R", "C"];
-            const randomBias = biasTypes[Math.floor(Math.random() * biasTypes.length)];
-            
-            // Create sample perspective data for each article
-            const perspectives = {
+        // Process and shuffle the articles first
+        const shuffledArticles = articlesData
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 30); // Take only 30 articles
+        
+        // Process articles with initial placeholders
+        const initialArticles = shuffledArticles.map(article => {
+          // Generate perspective data for each article
+          const biasTypes = ["L", "R", "C"];
+          const randomBias = biasTypes[Math.floor(Math.random() * biasTypes.length)];
+          
+          // Create sample perspective data for each article
+          const leftSources = Math.floor(Math.random() * 30 + 40); // Random number between 40-70
+          const centerSources = Math.floor(Math.random() * 30 + 60); // Random number between 60-90
+          const rightSources = Math.floor(Math.random() * 30 + 35); // Random number between 35-65
+          
+          const totalSources = leftSources + centerSources + rightSources;
+          
+          return {
+            ...article,
+            id: article._id || `article-${Math.random().toString(36).substr(2, 9)}`,
+            imageUrl: null, // Initial placeholder, will be loaded asynchronously
+            biasType: randomBias,
+            centerCoverage: `${Math.floor(Math.random() * 60 + 20)}%`, // Random percentage between 20-80%
+            sources: Math.floor(Math.random() * 15 + 5), // Random number between 5-20
+            publicationDate: formatDate(article.date),
+            perspectives: {
               left: {
                 title: article.title,
                 content: Array.isArray(article.content) ? article.content.join(" ") : article.content,
-                sources: Math.floor(Math.random() * 30 + 40), // Random number between 40-70
+                sources: leftSources,
                 keyPoints: [
                   "Focus on social impact",
                   "Emphasis on affected communities",
@@ -64,7 +65,7 @@ const StoryComparison = () => {
               center: {
                 title: article.title,
                 content: Array.isArray(article.content) ? article.content.join(" ") : article.content,
-                sources: Math.floor(Math.random() * 30 + 60), // Random number between 60-90
+                sources: centerSources,
                 keyPoints: [
                   "Balanced reporting of facts",
                   "Multiple viewpoints presented",
@@ -75,7 +76,7 @@ const StoryComparison = () => {
               right: {
                 title: article.title,
                 content: Array.isArray(article.content) ? article.content.join(" ") : article.content,
-                sources: Math.floor(Math.random() * 30 + 35), // Random number between 35-65
+                sources: rightSources,
                 keyPoints: [
                   "Focus on individual responsibility",
                   "Economic implications highlighted",
@@ -83,61 +84,113 @@ const StoryComparison = () => {
                   "National security considerations"
                 ]
               }
-            };
-            
-            // Coverage data for the bias visualization
-            const totalSources = perspectives.left.sources + perspectives.center.sources + perspectives.right.sources;
-            const coverageData = {
+            },
+            coverageData: {
               total: totalSources,
-              left: perspectives.left.sources,
-              right: perspectives.right.sources,
-              center: perspectives.center.sources,
+              left: leftSources,
+              right: rightSources,
+              center: centerSources,
               lastUpdated: "1 hour ago",
-              biasDistribution: `${Math.round((perspectives.center.sources / totalSources) * 100)}% Center`
-            };
-            
-            return {
-              ...article,
-              id: article._id || `article-${Math.random().toString(36).substr(2, 9)}`,
-              imageUrl,
-              biasType: randomBias,
-              centerCoverage: `${Math.floor(Math.random() * 60 + 20)}%`, // Random percentage between 20-80%
-              sources: Math.floor(Math.random() * 15 + 5), // Random number between 5-20
-              publicationDate: formatDate(article.date),
-              // Add perspective data to be used in StoryDetails
-              perspectives,
-              coverageData
-            };
-          })
-        );
-        
-        setArticles(articlesWithImages);
-        
-        // Randomly select and shuffle the first 30 articles
-        const shuffledArticles = articlesWithImages
-          .sort(() => 0.5 - Math.random())
-          .slice(0, 30);
-          
-        // Stagger the appearance of articles for a smoother effect
-        setVisibleArticles([]);
-        
-        // Add articles with a delay for staggered appearance
-        shuffledArticles.forEach((article, index) => {
-          setTimeout(() => {
-            setVisibleArticles(prev => [...prev, article]);
-          }, index * 50); // 50ms delay between each article appearing
+              biasDistribution: `${Math.round((centerSources / totalSources) * 100)}% Center`
+            }
+          };
         });
+        
+        // Set articles immediately so the UI can render
+        setArticles(initialArticles);
+        setLoading(false);
+        
+        // Load images in parallel in the background
+        const loadImages = async () => {
+          // Process in smaller batches to prevent network overload
+          const batchSize = 5;
+          const updatedArticles = [...initialArticles];
+          
+          // Process images in batches
+          for (let i = 0; i < updatedArticles.length; i += batchSize) {
+            const batch = updatedArticles.slice(i, i + batchSize);
+            
+            // Process batch concurrently
+            await Promise.all(batch.map(async (article, batchIndex) => {
+              const index = i + batchIndex;
+              let imageUrl = generateTitleImage(article.title);
+              
+              // Try to extract image from the article URL
+              if (article.url) {
+                try {
+                  // Use AbortController to prevent hanging requests
+                  const controller = new AbortController();
+                  const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+                  
+                  const imageResponse = await fetch(
+                    `http://localhost:5000/api/extract-image?url=${encodeURIComponent(article.url)}`,
+                    { signal: controller.signal }
+                  );
+                  
+                  clearTimeout(timeoutId);
+                  
+                  if (imageResponse.ok) {
+                    const imageData = await imageResponse.json();
+                    if (imageData.imageUrl) {
+                      imageUrl = imageData.imageUrl;
+                    }
+                  }
+                } catch (error) {
+                  // Just continue with the fallback image
+                  console.error("Image extraction error:", error.name === 'AbortError' ? 'Request timed out' : error);
+                }
+              }
+              
+              // Update the article with the image URL
+              updatedArticles[index] = {
+                ...updatedArticles[index],
+                imageUrl: imageUrl
+              };
+              
+              // Update the state periodically to show loading progress
+              if (batchIndex === batch.length - 1 || (batchIndex > 0 && batchIndex % 2 === 0)) {
+                setArticles([...updatedArticles]);
+              }
+            }));
+          }
+          
+          // Final update to ensure all changes are reflected
+          setArticles(updatedArticles);
+        };
+        
+        // Start loading images in the background
+        loadImages();
         
       } catch (err) {
         console.error("Error fetching articles:", err);
         setError(err.message);
-      } finally {
         setLoading(false);
       }
     };
 
     fetchArticles();
-  }, []);
+    
+    // Setup intersection observer for lazy loading more items
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && visibleItems < 30) {
+          setVisibleItems(prev => Math.min(prev + 6, 30));
+        }
+      },
+      { threshold: 0.5 }
+    );
+    
+    const sentinel = document.getElementById('load-more-sentinel');
+    if (sentinel) {
+      observer.observe(sentinel);
+    }
+    
+    return () => {
+      if (sentinel) {
+        observer.unobserve(sentinel);
+      }
+    };
+  }, [visibleItems]);
   
   // Format date nicely
   const formatDate = (dateString) => {
@@ -191,9 +244,16 @@ const StoryComparison = () => {
     navigate(`/story-details/${article.id}`);
   };
 
+  // Generate a title-based image for articles without valid images
+  const generateTitleImage = (title) => {
+    // Create a search term from the title
+    const searchTerm = encodeURIComponent(title?.split(' ').slice(0, 3).join(' ') || 'news');
+    return `https://source.unsplash.com/random/1200x600/?${searchTerm}`;
+  };
+
   if (loading) {
     return (
-      <div className="loading-container">
+      <div className="loading-container fade-in">
         <div className="pulse-loader"></div>
         <p>Loading stories from across the web...</p>
       </div>
@@ -202,7 +262,7 @@ const StoryComparison = () => {
 
   if (error) {
     return (
-      <div className="error-container">
+      <div className="error-container fade-in">
         <div className="error-icon">!</div>
         <h2>Oops! We hit a snag</h2>
         <p>{error}</p>
@@ -213,31 +273,39 @@ const StoryComparison = () => {
 
   return (
     <div className="story-comparison-container">
-      <div className="story-comparison-header">
+      <div className="story-comparison-header fade-in">
         <h1>Perspective Lens</h1>
         <p>Explore multiple viewpoints on today's trending stories</p>
         <div className="header-divider"></div>
       </div>
       
       <div className="comparison-grid">
-        {visibleArticles.map((article, index) => (
+        {articles.slice(0, visibleItems).map((article, index) => (
           <div
             key={article.id}
-            className="comparison-card"
+            className="comparison-card fast-render fade-in-up"
             onClick={() => handleStoryClick(article)}
             style={{ 
               cursor: "pointer",
-              animationDelay: `${index * 0.05}s`
+              animationDelay: `${index * 0.1}s` 
             }}
           >
             <div className="comparison-image-container">
               <div className="image-overlay"></div>
-              <img
-                src={article.imageUrl}
-                alt={article.title}
-                className="comparison-image"
-                loading="lazy"
-              />
+              {article.imageUrl ? (
+                <img
+                  src={article.imageUrl}
+                  alt={article.title}
+                  className="comparison-image"
+                  loading="lazy"
+                  onError={(e) => {
+                    e.target.onerror = null; // Prevent infinite loop
+                    e.target.src = generateTitleImage(article.title);
+                  }}
+                />
+              ) : (
+                <div className="image-placeholder pulse"></div>
+              )}
               <div className="comparison-category">
                 <span className="publication-dot"></span>
                 {article.publication || "News"}
@@ -294,7 +362,16 @@ const StoryComparison = () => {
         ))}
       </div>
       
-      {visibleArticles.length === 0 && !loading && (
+      {/* Sentinel for lazy loading more items */}
+      {visibleItems < articles.length && (
+        <div id="load-more-sentinel" className="load-more-sentinel">
+          <div className="loading-dots">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      )}
+      
+      {articles.length === 0 && !loading && (
         <div className="no-articles">
           <p>No articles found to display. Please check back later.</p>
         </div>

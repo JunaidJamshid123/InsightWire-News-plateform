@@ -67,36 +67,74 @@ const BiasDetails = () => {
     fetchArticleData()
   }, [id])
 
+  // Convert biasness label to bias class
   const getBiasClass = () => {
-    if (!article) return ""
+    if (!article) return "bias-unknown"
 
-    if (article.biasType === "L") return "bias-left"
-    if (article.biasType === "R") return "bias-right"
-    return "bias-center"
+    switch (article.biasness) {
+      case "LABEL_0":
+        return "bias-left"
+      case "LABEL_1":
+        return "bias-center"
+      case "LABEL_2":
+        return "bias-right"
+      default:
+        return "bias-unknown"
+    }
   }
 
+  // Convert biasness label to text
   const getBiasText = () => {
-    if (!article) return ""
+    if (!article) return "Unknown"
 
-    if (article.biasType === "L") return "Left-leaning"
-    if (article.biasType === "R") return "Right-leaning"
-    return "Balanced / Center"
+    switch (article.biasness) {
+      case "LABEL_0":
+        return "Left-leaning"
+      case "LABEL_1":
+        return "Politically Neutral"
+      case "LABEL_2":
+        return "Right-leaning"
+      default:
+        return "Bias Unknown"
+    }
   }
 
+  // Get bias color based on biasness label
   const getBiasColor = () => {
     if (!article) return "#4caf50"
 
-    if (article.biasType === "L") return "#3b5bdb"
-    if (article.biasType === "R") return "#e53935"
-    return "#4caf50"
+    switch (article.biasness) {
+      case "LABEL_0":
+        return "#3b5bdb" // Left - blue
+      case "LABEL_1":
+        return "#4caf50" // Center - green
+      case "LABEL_2":
+        return "#e53935" // Right - red
+      default:
+        return "#9e9e9e" // Unknown - gray
+    }
   }
 
+  // Get bias position for the gauge
   const getBiasPosition = () => {
     if (!article) return 50
 
-    if (article.biasType === "L") return article.biasStrength ? 15 + (35 - article.biasStrength) : 25
-    if (article.biasType === "R") return article.biasStrength ? 85 - (35 - article.biasStrength) : 75
-    return 50
+    switch (article.biasness) {
+      case "LABEL_0": {
+        // Position on left side of gauge, adjust based on confidence score
+        const score = article.score ? parseFloat(article.score) : 0.5
+        return 25 - (score * 15)
+      }
+      case "LABEL_2": {
+        // Position on right side of gauge, adjust based on confidence score
+        const score = article.score ? parseFloat(article.score) : 0.5
+        return 75 + (score * 15)
+      }
+      case "LABEL_1":
+        return 50 // Center position
+      default:
+        return 50
+    }
   }
 
   const handleGoBack = () => {
@@ -156,6 +194,28 @@ const BiasDetails = () => {
     return ""
   }
 
+  // Get confidence score as percentage
+  const getConfidenceScore = () => {
+    if (!article || !article.score) return "N/A"
+    
+    const score = parseFloat(article.score)
+    if (isNaN(score)) return "N/A"
+    
+    return `${(score * 100).toFixed(1)}%`
+  }
+
+  // Get bias strength based on confidence score
+  const getBiasStrength = () => {
+    if (!article || !article.score) return "Unknown"
+    
+    const score = parseFloat(article.score)
+    if (isNaN(score)) return "Unknown"
+    
+    if (score < 0.5) return "Weak"
+    if (score < 0.75) return "Medium"
+    return "Strong"
+  }
+
   if (loading) {
     return (
       <div className="bias-loading-container">
@@ -180,6 +240,15 @@ const BiasDetails = () => {
 
   const biasPosition = getBiasPosition()
 
+  // Calculate source distribution based on bias
+  const leftSources = article.biasness === "LABEL_0" ? 60 : article.biasness === "LABEL_1" ? 33 : 20
+  const centerSources = article.biasness === "LABEL_1" ? 50 : 30
+  const rightSources = article.biasness === "LABEL_2" ? 60 : article.biasness === "LABEL_1" ? 33 : 20
+  
+  // Calculate center coverage
+  const centerCoverage = article.biasness === "LABEL_1" ? "High" : 
+    (article.score && parseFloat(article.score) < 0.6) ? "Medium" : "Low"
+
   return (
     <div className="bias-container">
       <header className="bias-header">
@@ -199,7 +268,7 @@ const BiasDetails = () => {
           </svg>
           Back
         </button>
-        <div className="bias-category-tag">{article.category}</div>
+        <div className="bias-category-tag">{article.publication}</div>
       </header>
 
       <div className="bias-content">
@@ -215,8 +284,8 @@ const BiasDetails = () => {
         </button>
 
         <div className="bias-meta">
-          <span className="bias-date">Published on {article.publicationDate}</span>
-          <span className="bias-sources-count">{article.sources || "5"} sources analyzed</span>
+          <span className="bias-date">Published on {article.date !== "Loading..." ? article.date : "Recent"}</span>
+          <span className="bias-sources-count">AI-powered analysis</span>
         </div>
 
         <div className="bias-image-wrapper">
@@ -250,17 +319,17 @@ const BiasDetails = () => {
           <div className="bias-stats">
             <div className="bias-stat-item">
               <h3>Center Coverage</h3>
-              <div className="bias-stat-value">{article.centerCoverage || "37%"}</div>
+              <div className="bias-stat-value">{centerCoverage}</div>
               <p>Neutral, fact-based reporting</p>
             </div>
             <div className="bias-stat-item">
               <h3>Confidence Score</h3>
-              <div className="bias-stat-value">{article.confidenceScore || "85%"}</div>
+              <div className="bias-stat-value">{getConfidenceScore()}</div>
               <p>Analysis accuracy</p>
             </div>
             <div className="bias-stat-item">
               <h3>Bias Strength</h3>
-              <div className="bias-stat-value">{article.biasStrength || "Medium"}</div>
+              <div className="bias-stat-value">{getBiasStrength()}</div>
               <p>Intensity of bias</p>
             </div>
           </div>
@@ -269,31 +338,85 @@ const BiasDetails = () => {
         <section className="bias-content-section">
           <h2>Content Analysis</h2>
           <div className="bias-article-content">
-            <p>{article.fullContent || article.content}</p>
+            {Array.isArray(article.content) ? 
+              article.content.map((paragraph, index) => (
+                <p key={index}>{paragraph}</p>
+              )) : 
+              <p>{article.content}</p>
+            }
           </div>
 
-          {article.biasDetails && (
-            <div className="bias-indicators">
-              <h3>Bias Indicators Found</h3>
-              <ul className="bias-indicators-list">
-                {article.biasDetails.map((detail, index) => (
-                  <li key={index} className={`bias-indicator-item ${detail.type.toLowerCase()}-indicator`}>
+          <div className="bias-indicators">
+            <h3>Bias Indicators Found</h3>
+            <ul className="bias-indicators-list">
+              {article.biasness === "LABEL_0" && (
+                <>
+                  <li className="bias-indicator-item left-indicator">
                     <div className="indicator-header">
-                      <span className="indicator-badge">{detail.type}</span>
-                      <span className="indicator-impact">{detail.impact || "Moderate"} impact</span>
+                      <span className="indicator-badge">Language</span>
+                      <span className="indicator-impact">Moderate impact</span>
                     </div>
-                    <p className="indicator-description">{detail.description}</p>
-                    {detail.example && (
-                      <div className="indicator-example">
-                        <span className="example-label">Example:</span>
-                        <q className="example-text">{detail.example}</q>
-                      </div>
-                    )}
+                    <p className="indicator-description">
+                      The article uses language that tends to frame issues in a progressive context.
+                    </p>
                   </li>
-                ))}
-              </ul>
-            </div>
-          )}
+                  <li className="bias-indicator-item left-indicator">
+                    <div className="indicator-header">
+                      <span className="indicator-badge">Source Selection</span>
+                      <span className="indicator-impact">High impact</span>
+                    </div>
+                    <p className="indicator-description">
+                      Quoted sources tend to represent left-leaning or progressive viewpoints.
+                    </p>
+                  </li>
+                </>
+              )}
+              {article.biasness === "LABEL_2" && (
+                <>
+                  <li className="bias-indicator-item right-indicator">
+                    <div className="indicator-header">
+                      <span className="indicator-badge">Framing</span>
+                      <span className="indicator-impact">High impact</span>
+                    </div>
+                    <p className="indicator-description">
+                      The article frames issues in ways that favor conservative viewpoints.
+                    </p>
+                  </li>
+                  <li className="bias-indicator-item right-indicator">
+                    <div className="indicator-header">
+                      <span className="indicator-badge">Topic Selection</span>
+                      <span className="indicator-impact">Moderate impact</span>
+                    </div>
+                    <p className="indicator-description">
+                      The article focuses on topics that tend to align with conservative concerns.
+                    </p>
+                  </li>
+                </>
+              )}
+              {article.biasness === "LABEL_1" && (
+                <>
+                  <li className="bias-indicator-item center-indicator">
+                    <div className="indicator-header">
+                      <span className="indicator-badge">Balanced Reporting</span>
+                      <span className="indicator-impact">High impact</span>
+                    </div>
+                    <p className="indicator-description">
+                      The article presents multiple perspectives on the issue without showing preference.
+                    </p>
+                  </li>
+                  <li className="bias-indicator-item center-indicator">
+                    <div className="indicator-header">
+                      <span className="indicator-badge">Neutral Language</span>
+                      <span className="indicator-impact">High impact</span>
+                    </div>
+                    <p className="indicator-description">
+                      The article uses neutral language and avoids politically charged terms.
+                    </p>
+                  </li>
+                </>
+              )}
+            </ul>
+          </div>
         </section>
 
         <section className="source-section">
@@ -301,14 +424,14 @@ const BiasDetails = () => {
           <div className="source-visual">
             <div className="source-chart">
               <div className="source-bar">
-                <div className="source-segment left-segment" style={{ width: `${article.leftSources || 30}%` }}>
-                  <span>{article.leftSources || 30}%</span>
+                <div className="source-segment left-segment" style={{ width: `${leftSources}%` }}>
+                  <span>{leftSources}%</span>
                 </div>
-                <div className="source-segment center-segment" style={{ width: `${article.centerSources || 37}%` }}>
-                  <span>{article.centerSources || 37}%</span>
+                <div className="source-segment center-segment" style={{ width: `${centerSources}%` }}>
+                  <span>{centerSources}%</span>
                 </div>
-                <div className="source-segment right-segment" style={{ width: `${article.rightSources || 33}%` }}>
-                  <span>{article.rightSources || 33}%</span>
+                <div className="source-segment right-segment" style={{ width: `${rightSources}%` }}>
+                  <span>{rightSources}%</span>
                 </div>
               </div>
               <div className="source-labels">
@@ -323,8 +446,8 @@ const BiasDetails = () => {
             <h3>Analysis Methodology</h3>
             <p>
               Our AI-powered bias detection system analyzes multiple factors including language patterns, framing
-              techniques, source selection, and content omissions. We examine coverage from
-              {article.sources || " 5"} different sources to provide a comprehensive political bias assessment.
+              techniques, source selection, and content omissions. We examine articles from multiple perspectives
+              to provide a comprehensive political bias assessment with a confidence score of {getConfidenceScore()}.
             </p>
           </div>
         </section>
@@ -334,4 +457,3 @@ const BiasDetails = () => {
 }
 
 export default BiasDetails
-

@@ -25,7 +25,7 @@ const Chatbot = () => {
       
       try {
         // Send request to API with CORS handling
-        const response = await fetch("https://dd6e-203-215-167-154.ngrok-free.app/query", {
+        const response = await fetch("https://86f0-203-215-167-155.ngrok-free.app/query", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

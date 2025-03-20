@@ -12,6 +12,7 @@ import StoryComparison from "./components/StroyComparision/StoryComparision"
 import BiasDetails from './components/MediaBais/BiasDetails';
 import StoryDetails from './components/StroyComparision/StoryDetails';
 import SearchResults from './components/SearchResults';
+import Chatbot from "./components/chatbot/chatbot"
 import "./App.css"
 
 function App() {
@@ -54,12 +55,15 @@ function App() {
           
           {/* Story Comparison Route */}
           <Route path="/story-comparison" element={<StoryComparison />} />
-          
         </Routes>
         <Footer />
+        
+        {/* Add the chatbot here, outside of Routes */}
+        <div className="chatbot-container">
+          <Chatbot />
+        </div>
       </div>
     </Router>
   )
 }
-
 export default App
