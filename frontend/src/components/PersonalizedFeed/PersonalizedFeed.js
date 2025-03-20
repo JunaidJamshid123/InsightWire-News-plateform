@@ -19,9 +19,9 @@ const PersonalizedFeed = () => {
   // Bias categories
   const biasCategories = [
     { id: "all", label: "All Stories" },
-    { id: "left", label: "Left-Leaning" },
-    { id: "center", label: "Neutral" },
-    { id: "right", label: "Right-Leaning" },
+    { id: "LABEL_0", label: "Left-Leaning" },
+    { id: "LABEL_1", label: "Central" },
+    { id: "LABEL_2", label: "Right-Leaning" },
   ]
 
   // Function to shuffle array (Fisher-Yates algorithm)
@@ -70,12 +70,7 @@ const PersonalizedFeed = () => {
         setFilteredArticles(articles)
       } else {
         const filtered = articles.filter((article) => {
-          const bias = getPlaceholderBias(article.publication)
-          return (
-            bias === activeBias ||
-            (activeBias === "left" && bias === "far-left") ||
-            (activeBias === "right" && bias === "far-right")
-          )
+          return article.biasness === activeBias
         })
         setFilteredArticles(filtered)
       }
@@ -177,50 +172,18 @@ const PersonalizedFeed = () => {
     fetchPersonalizedArticles()
   }, [])
 
-  // Function to determine bias for demo purposes
-  const getPlaceholderBias = (publication) => {
-    const biasMap = {
-      "Time Magazine": "center",
-      "Fox News": "right",
-      CNN: "left",
-      MSNBC: "left",
-      "New York Times": "left",
-      "Wall Street Journal": "right",
-      Breitbart: "far-right",
-      "The Guardian": "left",
-      "Huffington Post": "left",
-      "Drudge Report": "right",
-      "Washington Post": "left",
-      NPR: "center",
-      BBC: "center",
-      "Al Jazeera": "center",
-    }
-
-    return biasMap[publication] || "unknown"
-  }
-
-  // Function to determine user interest level (simulated)
-  const getInterestLevel = (article) => {
-    // This would normally be based on user preferences, reading history, etc.
-    // For demo purposes, we'll use a random assignment
-    const levels = ["High", "Medium", "Low"]
-    const randomIndex = Math.floor(Math.random() * levels.length)
-    return levels[randomIndex]
-  }
-
   // Function to get bias info (color, text)
-  const getBiasInfo = (biasType) => {
-    switch (biasType) {
-      case "left":
-        return { class: "bias-left", text: "Left-Leaning" }
-      case "center":
-        return { class: "bias-center", text: "Politically Neutral" }
-      case "right":
-        return { class: "bias-right", text: "Right-Leaning" }
-      case "far-left":
-        return { class: "bias-far-left", text: "Far Left" }
-      case "far-right":
-        return { class: "bias-far-right", text: "Far Right" }
+  const getBiasInfo = (biasness, score) => {
+    const scoreValue = parseFloat(score) || 0.5
+    const intensity = scoreValue > 0.8 ? "strong" : scoreValue > 0.6 ? "moderate" : "mild"
+    
+    switch (biasness) {
+      case "LABEL_0":
+        return { class: "bias-center", text: `Neutral (${intensity})` }
+      case "LABEL_1":
+        return { class: "bias-left", text: `Left-Leaning (${intensity})` }
+      case "LABEL_2":
+        return { class: "bias-right", text: `Right-Leaning (${intensity})` }
       default:
         return { class: "bias-unknown", text: "Bias Unknown" }
     }
@@ -236,6 +199,9 @@ const PersonalizedFeed = () => {
     }
     return contentArray[0] || "No content available"
   }
+
+  // Function to get fact-checking reliability score
+
 
   // Handle bias filter change
   const handleBiasChange = (biasId) => {
@@ -267,7 +233,7 @@ const PersonalizedFeed = () => {
     <div className="personalized-feed-container">
       <div className="personalized-feed-header fade-in">
         <h1>Your Personalized News Feed</h1>
-        <p>News stories tailored to your interests</p>
+        <p>News stories with bias indicators</p>
       </div>
 
       {/* Bias Filter Bar */}
@@ -300,9 +266,8 @@ const PersonalizedFeed = () => {
 
       <div className={`news-grid ${filterChanging ? "fade-out" : "fade-in"}`}>
         {filteredArticles.slice(0, visibleItems).map((article, index) => {
-          const bias = getPlaceholderBias(article.publication)
-          const biasInfo = getBiasInfo(bias)
-          const interestLevel = getInterestLevel(article)
+          const biasInfo = getBiasInfo(article.biasness, article.score)
+         
 
           return (
             <div
@@ -341,11 +306,7 @@ const PersonalizedFeed = () => {
                   <span>{biasInfo.text}</span>
                 </div>
 
-                {/* Interest level indicator */}
-                <div className={`interest-tag interest-${interestLevel.toLowerCase()}`}>
-                  <div className="interest-icon"></div>
-                  <span>{interestLevel} Interest</span>
-                </div>
+              
 
                 <p className="news-excerpt">{getExcerpt(article.content)}</p>
 
@@ -376,4 +337,3 @@ const PersonalizedFeed = () => {
 }
 
 export default PersonalizedFeed
-
