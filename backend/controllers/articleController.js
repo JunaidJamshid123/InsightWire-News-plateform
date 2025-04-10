@@ -3,12 +3,16 @@ const CategorizedArticle = require("../models/CategorizedArticle");
 
 // Get all scraped articles
 exports.getScrapedArticles = async (req, res) => {
-    try {
-        const articles = await ScrapedArticle.find();
-        res.json(articles);
-    } catch (error) {
-        res.status(500).json({ msg: "Server error", error: error.message });
-    }
+  try {
+    // Find 30 random articles using MongoDB's aggregation pipeline
+    const articles = await ScrapedArticle.aggregate([
+      { $sample: { size: 30 } }
+    ]);
+    
+    res.json(articles);
+  } catch (error) {
+    res.status(500).json({ msg: "Server error", error: error.message });
+  }
 };
 
 // Get a specific scraped article by ID
