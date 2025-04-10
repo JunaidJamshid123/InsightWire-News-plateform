@@ -13,7 +13,7 @@ const StoryDetails = () => {
   const [apiStatus, setApiStatus] = useState("");
 
   // Update to the correct ngrok URL
-  const REWRITE_API_URL = "https://47b7-203-215-167-155.ngrok-free.app/rewrite";
+  const REWRITE_API_URL = "https://26ef-149-40-228-114.ngrok-free.app/rewrite";
 
   // Helper function to map bias label to string
   const mapBiasToString = (bias) => {

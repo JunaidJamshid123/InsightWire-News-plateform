@@ -9,6 +9,28 @@ const StoryComparison = () => {
   const [error, setError] = useState(null);
   const [visibleItems, setVisibleItems] = useState(12); // Initial number of visible items
 
+  // Function to convert database bias labels to display values
+  const convertBiasLabel = (biasLabel) => {
+    switch(biasLabel) {
+      case "LABEL_0": return "L"; // Left
+      case "LABEL_1": return "C"; // Center
+      case "LABEL_2": return "R"; // Right
+      default: return "C"; // Default to Center if unknown
+    }
+  };
+
+  // Function to calculate center coverage percentage from bias score
+  const calculateCenterCoverage = (biasLabel, score) => {
+    // For center articles, higher score means more balanced
+    if (biasLabel === "LABEL_1") {
+      return `${Math.round(score * 100)}%`;
+    }
+    // For left/right articles, higher score means less balanced
+    else {
+      return `${Math.round((1 - score) * 100)}%`;
+    }
+  };
+
   useEffect(() => {
     const fetchArticles = async () => {
       try {
@@ -31,14 +53,29 @@ const StoryComparison = () => {
         
         // Process articles with initial placeholders
         const initialArticles = shuffledArticles.map(article => {
-          // Generate perspective data for each article
-          const biasTypes = ["L", "R", "C"];
-          const randomBias = biasTypes[Math.floor(Math.random() * biasTypes.length)];
+          // Get bias type from database instead of generating random
+          const biasType = convertBiasLabel(article.biasness || "LABEL_1");
+          
+          // Calculate balanced coverage using the score from database
+          const centerCoverage = calculateCenterCoverage(article.biasness, article.score || 0.5);
           
           // Create sample perspective data for each article
-          const leftSources = Math.floor(Math.random() * 30 + 40); // Random number between 40-70
-          const centerSources = Math.floor(Math.random() * 30 + 60); // Random number between 60-90
-          const rightSources = Math.floor(Math.random() * 30 + 35); // Random number between 35-65
+          // We'll generate this data based on the bias type
+          let leftSources, centerSources, rightSources;
+          
+          if (biasType === "L") {
+            leftSources = Math.floor(Math.random() * 30 + 40); // Higher for left bias
+            centerSources = Math.floor(Math.random() * 20 + 20);
+            rightSources = Math.floor(Math.random() * 15 + 10);
+          } else if (biasType === "R") {
+            leftSources = Math.floor(Math.random() * 15 + 10);
+            centerSources = Math.floor(Math.random() * 20 + 20);
+            rightSources = Math.floor(Math.random() * 30 + 40); // Higher for right bias
+          } else { // Center
+            leftSources = Math.floor(Math.random() * 20 + 20);
+            centerSources = Math.floor(Math.random() * 30 + 40); // Higher for center
+            rightSources = Math.floor(Math.random() * 20 + 20);
+          }
           
           const totalSources = leftSources + centerSources + rightSources;
           
@@ -46,8 +83,8 @@ const StoryComparison = () => {
             ...article,
             id: article._id || `article-${Math.random().toString(36).substr(2, 9)}`,
             imageUrl: null, // Initial placeholder, will be loaded asynchronously
-            biasType: randomBias,
-            centerCoverage: `${Math.floor(Math.random() * 60 + 20)}%`, // Random percentage between 20-80%
+            biasType: biasType, // Use database value
+            centerCoverage: centerCoverage, // Use calculated value from database score
             sources: Math.floor(Math.random() * 15 + 5), // Random number between 5-20
             publicationDate: formatDate(article.date),
             perspectives: {
@@ -251,6 +288,16 @@ const StoryComparison = () => {
     return `https://source.unsplash.com/random/1200x600/?${searchTerm}`;
   };
 
+  // Function to get label and color for bias type
+  const getBiasLabel = (biasType) => {
+    switch(biasType) {
+      case "L": return "Left";
+      case "R": return "Right";
+      case "C": return "Center";
+      default: return "Center";
+    }
+  };
+
   if (loading) {
     return (
       <div className="loading-container fade-in">
@@ -322,9 +369,7 @@ const StoryComparison = () => {
                   "perspective-center"
                 }`}>
                   <span className="perspective-label">
-                    {article.biasType === "L" ? "Left" : 
-                     article.biasType === "R" ? "Right" : 
-                     "Center"}
+                    {getBiasLabel(article.biasType)}
                   </span>
                 </div>
                 <div className="perspective-meter">
